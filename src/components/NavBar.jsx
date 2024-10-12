@@ -1,17 +1,32 @@
-import { useState } from 'react'
+import { useContext } from 'react'
 import { TiDelete } from 'react-icons/ti'
+import { FilterContext } from '../context/FilterContext'
 const NavBar = () => {
-  //Estado para el input
-  const [query, setQuery] = useState('')
+  //Llamamos al filter y a su función de seteo
+  const { filter, setFilter } = useContext(FilterContext)
 
-  //Método para actualizar el valor del estado cuando se actualice el valor input
-  const handleChange = (e) => {
-    setQuery(e.target.value)
+  //Vaciamos la query
+  const handleClick = () => {
+    setFilter((prev) => ({
+      ...prev,
+      query: '',
+    }))
   }
 
-  //Método para resetear el valor de el input
-  const handleClick = () => {
-    setQuery('')
+  //Acualizamos el sortBy cuando el valor del select cambie
+  const sortByChange = (e) => {
+    setFilter((prev) => ({
+      ...prev,
+      sortBy: e.target.value,
+    }))
+  }
+
+  //Actualizamos la query cuando el valor del input cambie
+  const filterByQuery = (e) => {
+    setFilter((prev) => ({
+      ...prev,
+      query: e.target.value.toLowerCase(),
+    }))
   }
 
   return (
@@ -21,8 +36,8 @@ const NavBar = () => {
         <div className="flex lg:w-64 items-center bg-white p-1 border border-black rounded-full ">
           <input
             type="text"
-            onChange={handleChange}
-            value={query}
+            onChange={filterByQuery}
+            value={filter.query}
             className="w-52 sm:w-52 px-2 lg:w-64 outline-none"
             placeholder="Arbol AVL, Arbol BST..."
           />
@@ -32,8 +47,13 @@ const NavBar = () => {
             onClick={handleClick}
           />
         </div>
-        <select className="w-60 md:w-64 p-1 border rounded">
-          <option>Alfabeticamente</option>
+        <select
+          onChange={sortByChange}
+          className="w-60 md:w-64 p-1 border rounded"
+        >
+          <option value="none">Por defecto</option>
+          <option value="abc">Alfabeticamente</option>
+          <option value="complexity">Por Complejidad</option>
         </select>
       </div>
     </header>
