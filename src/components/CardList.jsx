@@ -19,7 +19,7 @@ const CardList = () => {
           bgCard={item.bgCard}
           bgButton={item.bgButton}
           toConceptos={'#'}
-          toPracticar={'#'}
+          toPracticar={item.toPracticar}
         />
       ))}
     </main>

@@ -16,7 +16,7 @@ const data = [
     complexity: 4,
     bgButton: '#90def6',
     toConceptos: '',
-    toPracticar: '',
+    toPracticar: '/practicar-B',
   },
   {
     title: 'Árbol AVL',
@@ -25,7 +25,7 @@ const data = [
     bgCard: '#ff5501',
     bgButton: '#ff9460',
     toConceptos: '',
-    toPracticar: '',
+    toPracticar: '/practicar-AVL',
   },
   {
     title: 'Árbol Rojo-Negro',
@@ -34,7 +34,7 @@ const data = [
     bgCard: '#0efe46',
     bgButton: '#6bfe8c',
     toConceptos: '',
-    toPracticar: '',
+    toPracticar: '/practicar-Rojo-Negro',
   },
 ]
 
