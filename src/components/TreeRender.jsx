@@ -1,7 +1,7 @@
 import * as d3 from 'd3'
 import { useEffect, useState } from 'react'
 
-export default function TreeRender({ tree }) {
+export default function TreeRender({ tree, number }) {
   const [treeData, setTreeData] = useState(null)
 
   // Función para convertir el árbol de datos en formato jerárquico
@@ -41,12 +41,28 @@ export default function TreeRender({ tree }) {
     setTreeData(convertirATreeData(tree))
   }, [tree])
 
+  const marcarCamino = (node) => {
+    if (!node) return
+    node.data.isPath = true // Marca este nodo
+    if (node.parent) {
+      marcarCamino(node.parent) // Repite recursivamente para el nodo padre
+    }
+  }
+
   useEffect(() => {
     if (!treeData) return
 
     const root = d3.hierarchy(treeData)
+    const nuevoNodo = root
+      .descendants()
+      .find((d) => d.data.name === number.toAdd)
+    if (nuevoNodo) {
+      marcarCamino(nuevoNodo) // Marca el camino desde el nodo nuevo hasta la raíz
+    }
     const width = 628
     const height = 416
+
+    // Añadir márgenes al tamaño del SVG
     const margin = {
       top: 50,
       right: 50,
@@ -73,7 +89,6 @@ export default function TreeRender({ tree }) {
 
     treeLayout(root)
 
-    // Añadir márgenes al tamaño del SVG
     const links = svg
       .selectAll('.link')
       .data(
@@ -88,8 +103,12 @@ export default function TreeRender({ tree }) {
       .enter()
       .append('path')
       .attr('class', 'link')
-      .attr('stroke', '#000')
-      .attr('stroke-width', 2)
+      .attr('stroke', (d) =>
+        d.source.data.isPath && d.target.data.isPath ? 'green' : '#000'
+      )
+      .attr('stroke-width', (d) =>
+        d.source.data.isPath && d.target.data.isPath ? '3' : '2'
+      )
       .attr('fill', 'none')
       .attr('d', (d) => {
         const sourceX = d.source.x
@@ -99,7 +118,9 @@ export default function TreeRender({ tree }) {
         return `M${sourceX},${sourceY}L${sourceX},${sourceY}` // Inicialmente no se ve
       })
       .transition()
-      .duration(2000)
+      .duration((d) =>
+        d.source.data.isPath && d.target.data.isPath ? 2000 : 1000
+      )
       .attr('d', diagonal)
       .ease(d3.easeCircleInOut)
 
@@ -127,19 +148,25 @@ export default function TreeRender({ tree }) {
       .transition()
       .delay((d, i) => i * 80)
       .attr('r', 25)
+      .attr('stroke', (d) =>
+        d.data.isPath && d.data.isPath ? 'green' : 'black'
+      )
+      .attr('stroke-width', (d) => (d.data.isPath && d.data.isPath ? '3' : '2'))
       .style('fill', function (d) {
+        if (d.data.name === number.toAdd) return 'green'
         return d.children || d._children ? 'lightblue' : 'lightgray'
       })
       .style('visibility', function (d) {
         return d.data.name === 'Empty' ? 'hidden' : 'visible'
       })
-      .duration(200)
+      .duration((d) => (d.data.isPath && d.data.isPath ? 2000 : 1000))
       .ease(d3.easeBackOut)
 
     const charText = nodeEnter
       .append('text')
       .attr('y', 5)
       .attr('text-anchor', 'middle')
+      .attr('fill', (d) => (d.data.name === number.toAdd ? 'white' : 'black'))
 
     // Muestra el texto solo si el nodo no es "Empty"
     charText
