@@ -11,13 +11,14 @@ const AppRouter = () => {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/mostrar" element={<App />} />
-
         {/* Rutas para página de inico de práctica */}
         <Route path="/practicar-BST" element={<PracticaArbolBST />} />
         <Route path="/practicar-B" element={<PracticaArbolB />} />
         <Route path="/practicar-AVL" element={<PracticaArbolAVL />} />
-        <Route path="/practicar-Rojo-Negro" element={<PracticaArbolRojoNegro />} />
+        <Route
+          path="/practicar-Rojo-Negro"
+          element={<PracticaArbolRojoNegro />}
+        />
       </Routes>
     </Router>
   )
