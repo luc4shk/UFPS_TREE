@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { TiDelete } from 'react-icons/ti'
+import { motion } from 'framer-motion'
 import { FilterContext } from '../context/FilterContext'
 const NavBar = () => {
   //Llamamos al filter y a su función de seteo
@@ -32,8 +33,10 @@ const NavBar = () => {
   return (
     <header className="w-full bg-white">
       <div className=" m-auto flex flex-col sm:flex-row sm:flex items-center sm:justify-between px-6 w-full  max-w-[1200px] bg-white h-32 sm:h-24 gap-2 sm:gap-10 ">
-        <h1 className="text-2xl lg:w-60 font-semibold">Simulador UFPS_TREE</h1>
-        <div className="flex lg:w-64 items-center bg-white p-1 border border-black rounded-full ">
+        <h1 className="text-2xl md:w-64 lg:w-72 font-semibold">
+          Simulador UFPS_TREE
+        </h1>
+        <div className="flex min-w-64 lg:w-64 items-center bg-white p-1 border border-black rounded-full overflow-hidden">
           <input
             type="text"
             onChange={filterByQuery}
@@ -49,7 +52,7 @@ const NavBar = () => {
         </div>
         <select
           onChange={sortByChange}
-          className="w-60 md:w-64 p-1 border rounded"
+          className="w-60 md:w-64 lg:w-72 p-1 border rounded"
         >
           <option value="none">Por defecto</option>
           <option value="abc">Alfabeticamente</option>
