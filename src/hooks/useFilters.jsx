@@ -7,7 +7,8 @@ const useFilters = () => {
 
   //Ordena los arboles dependiendo del filtro
   const filterTrees = ({ trees }) => {
-    let array = trees
+    //Copiamos el arreglo
+    let array = [...trees]
 
     //Si existe la query buscamos por ella
     if (filter.query != '') {
