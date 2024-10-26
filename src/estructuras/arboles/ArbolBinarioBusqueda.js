@@ -97,7 +97,7 @@ export class ArbolBinarioBusqueda {
 
       // Generar un número aleatorio y asegurarse de que no se repita
       do {
-        valorAleatorio = Math.floor(Math.random() * 100) // Genera un número aleatorio entre 0 y 99
+        valorAleatorio = Math.floor(Math.random() * 99) + 1 // Genera un número aleatorio entre 0 y 99
       } while (valoresInsertados.has(valorAleatorio)) // Si el número ya ha sido insertado, genera otro
 
       valoresInsertados.add(valorAleatorio) // Agrega el valor al conjunto de insertados
@@ -140,7 +140,7 @@ export class ArbolBinarioBusqueda {
    * */
   obtenerNodoMenor() {
     const node = this.buscarNodoMenor(this.getRaiz())
-    return node.info
+    return node?.info
   }
 
   /**
@@ -149,6 +149,7 @@ export class ArbolBinarioBusqueda {
    * @param {NodoBinario} r - Raíz o punto de partida
    * */
   buscarNodoMenor(r) {
+    if (r === null) return
     if (r.getIzq() === null) return r
     return this.buscarNodoMenor(r.getIzq())
   }
@@ -159,7 +160,7 @@ export class ArbolBinarioBusqueda {
    * */
   obtenerNodoMayor() {
     const node = this.buscarNodoMayor(this.getRaiz())
-    return node.info
+    return node?.info
   }
 
   /**
@@ -168,6 +169,7 @@ export class ArbolBinarioBusqueda {
    * @param {NodoBinario} r - Raíz o punto de partida
    * */
   buscarNodoMayor(r) {
+    if (r === null) return
     if (r.getDer() === null) return r
     return this.buscarNodoMayor(r.getDer())
   }

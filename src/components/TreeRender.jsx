@@ -196,7 +196,9 @@ export default function TreeRender({ tree, values }) {
         return d.children || d._children ? 'lightblue' : 'lightgray'
       })
       .style('visibility', function (d) {
-        return d.data.name === 'Empty' ? 'hidden' : 'visible'
+        return d.data.name === 'Empty' || d.data.name === undefined
+          ? 'hidden'
+          : 'visible'
       })
 
     const charText = nodeEnter
@@ -542,7 +544,6 @@ export default function TreeRender({ tree, values }) {
 
   const doDeleteSteps = (value, d, i) => {
     // Primero, verifica si el nodo actual coincide con el valor a eliminar
-    console.log(value, d.data.name)
     if (d.data.name === value) {
       setSteps((prev) => [
         ...prev,
@@ -637,3 +638,4 @@ export default function TreeRender({ tree, values }) {
     </div>
   )
 }
+

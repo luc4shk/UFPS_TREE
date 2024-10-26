@@ -39,7 +39,7 @@ export const PracticaArbolBST = () => {
       }}
       values={values}
     >
-      {raiz && <TreeRender tree={raiz} values={values} />}
+      <TreeRender tree={!raiz ? {} : raiz} values={values} />
     </LayoutTree>
   )
 }

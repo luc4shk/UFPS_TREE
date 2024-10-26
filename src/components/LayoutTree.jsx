@@ -12,7 +12,6 @@ export const LayoutTree = ({
 }) => {
   const [selectedAction, setSelectedAction] = useState('')
   const { steps, setSteps } = useContext(StepsContext)
-  //const { values, setValues } = useQuerys()
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-150 p-4">
@@ -46,7 +45,7 @@ export const LayoutTree = ({
                 //Obtenemos el valor del input
                 const nodesToAdd = Number(form.inputNodesToAdd.value)
 
-                if (nodesToAdd < 0 || nodesToAdd > 30) return
+                if (nodesToAdd <= 0 || nodesToAdd > 30) return
 
                 treeFunctions.createTreeByNodes(nodesToAdd)
               }}
@@ -75,7 +74,7 @@ export const LayoutTree = ({
                 const form = e.target
                 //Obtenemos el valor del input
                 const valueToAdd = Number(form.inputToAdd.value)
-                if (valueToAdd < 0 || valueToAdd > 99) return
+                if (valueToAdd <= 0 || valueToAdd > 99) return
                 treeFunctions.addNode(valueToAdd)
               }}
               className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4"
