@@ -86,6 +86,26 @@ export class ArbolBinarioBusqueda {
   }
 
   /**
+   * Inserta un número de nodos con valores aleatorios entre 0 y 99 en el árbol.
+   * @param {Number} cantidad - Número de nodos a insertar.
+   */
+  insertarNodosAleatorios(cantidad) {
+    const valoresInsertados = new Set() // Conjunto para almacenar los valores ya insertados
+
+    for (let i = 0; i < cantidad; i++) {
+      let valorAleatorio
+
+      // Generar un número aleatorio y asegurarse de que no se repita
+      do {
+        valorAleatorio = Math.floor(Math.random() * 100) // Genera un número aleatorio entre 0 y 99
+      } while (valoresInsertados.has(valorAleatorio)) // Si el número ya ha sido insertado, genera otro
+
+      valoresInsertados.add(valorAleatorio) // Agrega el valor al conjunto de insertados
+      this.insertar(valorAleatorio) // Inserta el número aleatorio en el árbol
+    }
+  }
+
+  /**
    * Vaciar el arbol.
    * */
   vaciarArbol() {

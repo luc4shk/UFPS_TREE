@@ -9,17 +9,27 @@ const useArbolBST = () => {
   const [raiz, setRaiz] = useState(arbolBST.getRaiz() || null)
 
   //Estado para manejar las query del usuario, numero a ingresar y eliminar
-  const [numbers, setNumbers] = useState({
+  const [values, setValues] = useState({
+    randomNodes: null,
     toAdd: null,
     toDelete: null,
+    toSearch: null,
+    preorden: null,
+    postorden: null,
+    inorden: null,
   })
 
   //Cada vez que se reenderice el componente construimos el arbol
   useEffect(() => {
     const nodo = JSON.parse(window.localStorage.getItem('arbol'))?.raiz || null
-    const numbers = JSON.parse(window.localStorage.getItem('numbers')) || {
+    const values = JSON.parse(window.localStorage.getItem('values')) || {
+      randomNodes: null,
       toAdd: null,
       toDelete: null,
+      toSearch: null,
+      preorden: null,
+      postorden: null,
+      inorden: null,
     }
     if (nodo) {
       const crearNodo = (data) => {
@@ -34,7 +44,7 @@ const useArbolBST = () => {
       const nuevoArbol = new ArbolBinarioBusqueda(nuevoNodo)
       setArbolBST(nuevoArbol)
       setRaiz(nuevoArbol.getRaiz())
-      setNumbers(numbers)
+      setValues(values)
     }
   }, [])
 
@@ -45,7 +55,7 @@ const useArbolBST = () => {
     window.localStorage.setItem('arbol', JSON.stringify(nuevoArbol, 2, null))
     setArbolBST(nuevoArbol)
     setRaiz(nuevoArbol.getRaiz()) // Actualizar la raíz después de la inserción
-    setNumbers((prev) => {
+    setValues((prev) => {
       window.localStorage.setItem(
         'numbers',
         JSON.stringify(
@@ -71,11 +81,11 @@ const useArbolBST = () => {
     window.localStorage.setItem('arbol', JSON.stringify(nuevoArbol, 2, null))
     setArbolBST(nuevoArbol)
     setRaiz(nuevoArbol.getRaiz()) // Actualizar la raíz después de la inserción
-    setNumbers((prev) => ({
+    setValues((prev) => ({
       ...prev,
       toDelete: Number(query),
     }))
-    window.localStorage.setItem('numbers', JSON.stringify(numbers, 2, null))
+    window.localStorage.setItem('numbers', JSON.stringify(values, 2, null))
   }
 
   //Método para vaciar el arbol
@@ -87,12 +97,71 @@ const useArbolBST = () => {
     window.localStorage.removeItem('arbol')
   }
 
+  const insertRandomNodes = (nodesNumber) => {
+    const nuevoArbol = new ArbolBinarioBusqueda()
+    nuevoArbol.insertarNodosAleatorios(nodesNumber)
+    window.localStorage.setItem('arbol', JSON.stringify(nuevoArbol, 2, null))
+    setArbolBST(nuevoArbol)
+    setRaiz(nuevoArbol.getRaiz())
+    setValues((prev) => ({
+      ...prev,
+      randomNodes: nodesNumber,
+    }))
+  }
+
+  const getPreOrden = () => {
+    const preorden = arbolBST.preOrden()
+    setValues((prev) => ({
+      ...prev,
+      postorden: null,
+      inorden: null,
+      preorden: preorden,
+    }))
+  }
+
+  const getPostOrden = () => {
+    const postorden = arbolBST.postOrden()
+    setValues((prev) => ({
+      ...prev,
+      preorden: null,
+      inorden: null,
+      postorden: postorden,
+    }))
+  }
+
+  const getInOrden = () => {
+    const inorden = arbolBST.inOrden()
+    setValues((prev) => ({
+      ...prev,
+      preorden: null,
+      postorden: null,
+      inorden: inorden,
+    }))
+  }
+
+  const resetValues = () => {
+    setValues({
+      toAdd: null,
+      toDelete: null,
+      toSearch: null,
+      preorden: null,
+      postorden: null,
+      inorden: null,
+    })
+    window.localStorage.removeItem('numbers')
+    window.localStorage.removeItem('values')
+  }
   return {
-    numbers,
+    values,
     raiz,
     insertarNodo,
     removerNodo,
     vaciarArbol,
+    insertRandomNodes,
+    getPreOrden,
+    getPostOrden,
+    getInOrden,
+    resetValues,
   }
 }
 

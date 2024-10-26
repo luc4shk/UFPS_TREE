@@ -1,8 +1,18 @@
-import { useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { StepsContext } from '../context/StepsContext'
 
-export const LayoutTree = ({ title, containerColor, linkColor, children }) => {
+export const LayoutTree = ({
+  values,
+  title,
+  containerColor,
+  linkColor,
+  children,
+  treeFunctions,
+}) => {
   const [selectedAction, setSelectedAction] = useState('')
+  const { steps, setSteps } = useContext(StepsContext)
+  //const { values, setValues } = useQuerys()
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-150 p-4">
@@ -28,58 +38,93 @@ export const LayoutTree = ({ title, containerColor, linkColor, children }) => {
         <div className="flex flex-col gap-4 w-full md:w-3/4 h-full">
           {/* Controles de Crear Nodos */}
           {selectedAction === 'Crear' && (
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                //Obtenemos el formulario
+                const form = e.target
+                //Obtenemos el valor del input
+                const nodesToAdd = form.inputNodesToAdd.value
+
+                if (nodesToAdd < 0 || nodesToAdd > 30) return
+
+                treeFunctions.createTreeByNodes(nodesToAdd)
+              }}
+              className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4"
+            >
               <h1 className="text-white text-lg md:text-xl">
                 Digite la cantidad de nodos a crear:
               </h1>
               <input
                 type="number"
+                name="inputNodesToAdd"
                 className="p-2 border border-gray-300 rounded w-full md:w-auto"
               />
               <button className="bg-white p-2 rounded w-full md:w-auto">
                 Crear
               </button>
-            </div>
+            </form>
           )}
 
           {/* Controles de insertar nodos */}
           {selectedAction === 'Insertar' && (
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                //Obtenemos el form
+                const form = e.target
+                //Obtenemos el valor del input
+                const valueToAdd = form.inputToAdd.value
+                if (valueToAdd < 0 || valueToAdd > 99) return
+                treeFunctions.addNode(valueToAdd)
+              }}
+              className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4"
+            >
               <h1 className="text-white text-lg md:text-xl">
                 Digite el nodo a insertar:
               </h1>
               <input
                 type="number"
+                name="inputToAdd"
                 className="p-2 border border-gray-300 rounded w-full md:w-auto"
               />
               <button className="bg-white p-2 rounded w-full md:w-auto">
                 Insertar
               </button>
-            </div>
+            </form>
           )}
 
           {/* Controles para eliminar nodo */}
           {selectedAction === 'Eliminar' && (
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                //Obtenemos el form
+                const form = e.target
+                //Obtenemos el valor del input
+                const valueToDelete = form.inputToDelete.value
+                treeFunctions.deleteNode(valueToDelete)
+              }}
+              className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4"
+            >
               <h1 className="text-white text-lg md:text-xl">
                 Digite el nodo a eliminar:
               </h1>
               <input
                 type="number"
+                name="inputToDelete"
                 className="p-2 border border-gray-300 rounded w-full md:w-auto"
               />
               <button className="bg-white p-2 rounded w-full md:w-auto">
                 Eliminar
               </button>
-            </div>
+            </form>
           )}
 
           {/* Controles de búsqueda */}
           {selectedAction === 'Buscar' && (
             <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4">
-              <h1 className="text-white text-lg md:text-xl">
-                Buscar nodo:
-              </h1>
+              <h1 className="text-white text-lg md:text-xl">Buscar nodo:</h1>
               <input
                 type="number"
                 className="p-2 border border-gray-300 rounded w-full md:w-auto"
@@ -99,30 +144,45 @@ export const LayoutTree = ({ title, containerColor, linkColor, children }) => {
           {/* Recorridos */}
           {selectedAction === 'Recorridos' && (
             <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4">
-              <button className="bg-white p-2 rounded w-full md:w-auto">
+              <button
+                onClick={() => treeFunctions.getInOrden()}
+                className="bg-white p-2 rounded w-full md:w-auto"
+              >
                 Inorden
               </button>
-              <button className="bg-white p-2 rounded w-full md:w-auto">
+              <button
+                onClick={() => treeFunctions.getPreOrden()}
+                className="bg-white p-2 rounded w-full md:w-auto"
+              >
                 Preorden
               </button>
-              <button className="bg-white p-2 rounded w-full md:w-auto">
+              <button
+                onClick={() => treeFunctions.getPostOrden()}
+                className="bg-white p-2 rounded w-full md:w-auto"
+              >
                 Postorden
               </button>
             </div>
           )}
 
           {/* Controles de limpieza */}
-          { selectedAction === 'Limpiar' &&  (
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4">
+          {selectedAction === 'Limpiar' && (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                treeFunctions.deleteTree()
+              }}
+              className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4"
+            >
               <button className="bg-white p-2 rounded w-full md:w-auto">
                 Limpiar
               </button>
-            </div>
+            </form>
           )}
 
           {/* Área para el árbol */}
           <div
-            className={`flex-grow bg-white rounded-lg shadow-md flex items-center justify-center overflow-hidden`}
+            className={`flex-grow bg-white rounded-lg shadow-md flex items-center justify-center overflow-auto`}
             style={{
               padding: '1rem',
               height: '100%',
@@ -135,11 +195,22 @@ export const LayoutTree = ({ title, containerColor, linkColor, children }) => {
             </div>
           </div>
 
-           {/* Área de resultado del recorrido */}
-           {selectedAction === 'Recorridos' && (
+          {/* Área de resultado del recorrido */}
+          {selectedAction === 'Recorridos' && (
             <div className="bg-white p-4 rounded-lg shadow-md mt-4">
-              <h2 className="text-lg font-bold mb-2">Resultado del Recorrido</h2>
-              <p>10</p>
+              <h2 className="text-lg font-bold mb-2">
+                Resultado del Recorrido
+              </h2>
+              {/**Validación para mostrar el recorrido correcto**/}
+              <p>
+                {values.preorden
+                  ? values.preorden
+                  : values.postorden
+                    ? values.postorden
+                    : values.inorden
+                      ? values.inorden
+                      : null}
+              </p>
             </div>
           )}
         </div>
@@ -150,7 +221,11 @@ export const LayoutTree = ({ title, containerColor, linkColor, children }) => {
           <select
             className="p-2 border border-gray-300 rounded mb-4"
             value={selectedAction}
-            onChange={(e) => setSelectedAction(e.target.value)}
+            onChange={(e) => {
+              treeFunctions.resetValues()
+              setSteps([])
+              setSelectedAction(e.target.value)
+            }}
           >
             <option hidden>Seleccione una operación</option>
             <option>Crear</option>
@@ -166,10 +241,9 @@ export const LayoutTree = ({ title, containerColor, linkColor, children }) => {
             <h2 className="text-lg font-bold mb-2">Código</h2>
             <pre className="whitespace-pre-wrap break-words">
               <code>
-                insert v check balance factor of this and its children case1:
-                this.rotateRight case2: this.left.rotateLeft, this.rotateRight
-                case3: this.rotateLeft case4: this.right.rotateRight,
-                this.rotateLeft this is balanced
+                {steps?.map((step, i) => (
+                  <div key={i}>{step}</div>
+                ))}
               </code>
             </pre>
           </div>
@@ -178,4 +252,3 @@ export const LayoutTree = ({ title, containerColor, linkColor, children }) => {
     </div>
   )
 }
-
