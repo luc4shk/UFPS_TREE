@@ -135,6 +135,15 @@ export class ArbolBinarioBusqueda {
   }
 
   /**
+   * Retorna el valor del nodo menor
+   * @returns {Number} Valor del nodo menor
+   * */
+  obtenerNodoMenor() {
+    const node = this.buscarNodoMenor(this.getRaiz())
+    return node.info
+  }
+
+  /**
    * Retorna el nodo menor a partir de la raiz
    * @private
    * @param {NodoBinario} r - Raíz o punto de partida
@@ -142,6 +151,15 @@ export class ArbolBinarioBusqueda {
   buscarNodoMenor(r) {
     if (r.getIzq() === null) return r
     return this.buscarNodoMenor(r.getIzq())
+  }
+
+  /**
+   * Retoran el valor del nodo mayor
+   * @returns {Number} Valor del nodo mayor
+   * */
+  obtenerNodoMayor() {
+    const node = this.buscarNodoMayor(this.getRaiz())
+    return node.info
   }
 
   /**

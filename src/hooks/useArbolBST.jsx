@@ -50,28 +50,16 @@ const useArbolBST = () => {
 
   //Método para añadir un nodo al arbol
   const insertarNodo = (query) => {
+    console.log('valora indersat', query, typeof query)
     const nuevoArbol = arbolBST.clonar()
     nuevoArbol.insertar(query)
     window.localStorage.setItem('arbol', JSON.stringify(nuevoArbol, 2, null))
     setArbolBST(nuevoArbol)
     setRaiz(nuevoArbol.getRaiz()) // Actualizar la raíz después de la inserción
-    setValues((prev) => {
-      window.localStorage.setItem(
-        'numbers',
-        JSON.stringify(
-          {
-            ...prev,
-            toAdd: query,
-          },
-          2,
-          null
-        )
-      )
-      return {
-        ...prev,
-        toAdd: query,
-      }
-    })
+    setValues((prev) => ({
+      ...prev,
+      toAdd: query,
+    }))
   }
 
   //Método para remover un nodo del arbol
@@ -88,6 +76,27 @@ const useArbolBST = () => {
     window.localStorage.setItem('numbers', JSON.stringify(values, 2, null))
   }
 
+  const buscarNodoExacto = (query) => {
+    setValues((prev) => ({
+      ...prev,
+      toSearch: Number(query),
+    }))
+  }
+
+  const buscarNodoMayor = () => {
+    setValues((prev) => ({
+      ...prev,
+      toSearch: arbolBST.obtenerNodoMayor(),
+    }))
+  }
+
+  const buscarNodoMenor = () => {
+    setValues((prev) => ({
+      ...prev,
+      toSearch: arbolBST.obtenerNodoMenor(),
+    }))
+  }
+
   //Método para vaciar el arbol
   const vaciarArbol = () => {
     const nuevoArbol = arbolBST.clonar()
@@ -99,6 +108,7 @@ const useArbolBST = () => {
 
   const insertRandomNodes = (nodesNumber) => {
     const nuevoArbol = new ArbolBinarioBusqueda()
+    console.log(nodesNumber)
     nuevoArbol.insertarNodosAleatorios(nodesNumber)
     window.localStorage.setItem('arbol', JSON.stringify(nuevoArbol, 2, null))
     setArbolBST(nuevoArbol)
@@ -141,6 +151,7 @@ const useArbolBST = () => {
 
   const resetValues = () => {
     setValues({
+      randomNodes: null,
       toAdd: null,
       toDelete: null,
       toSearch: null,
@@ -156,6 +167,9 @@ const useArbolBST = () => {
     raiz,
     insertarNodo,
     removerNodo,
+    buscarNodoExacto,
+    buscarNodoMayor,
+    buscarNodoMenor,
     vaciarArbol,
     insertRandomNodes,
     getPreOrden,

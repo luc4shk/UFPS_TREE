@@ -44,7 +44,7 @@ export const LayoutTree = ({
                 //Obtenemos el formulario
                 const form = e.target
                 //Obtenemos el valor del input
-                const nodesToAdd = form.inputNodesToAdd.value
+                const nodesToAdd = Number(form.inputNodesToAdd.value)
 
                 if (nodesToAdd < 0 || nodesToAdd > 30) return
 
@@ -74,7 +74,7 @@ export const LayoutTree = ({
                 //Obtenemos el form
                 const form = e.target
                 //Obtenemos el valor del input
-                const valueToAdd = form.inputToAdd.value
+                const valueToAdd = Number(form.inputToAdd.value)
                 if (valueToAdd < 0 || valueToAdd > 99) return
                 treeFunctions.addNode(valueToAdd)
               }}
@@ -102,7 +102,8 @@ export const LayoutTree = ({
                 //Obtenemos el form
                 const form = e.target
                 //Obtenemos el valor del input
-                const valueToDelete = form.inputToDelete.value
+                const valueToDelete = Number(form.inputToDelete.value)
+
                 treeFunctions.deleteNode(valueToDelete)
               }}
               className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4"
@@ -124,18 +125,36 @@ export const LayoutTree = ({
           {/* Controles de búsqueda */}
           {selectedAction === 'Buscar' && (
             <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4">
-              <h1 className="text-white text-lg md:text-xl">Buscar nodo:</h1>
-              <input
-                type="number"
-                className="p-2 border border-gray-300 rounded w-full md:w-auto"
-              />
-              <button className="bg-white p-2 rounded w-full md:w-auto">
-                Exacta
-              </button>
-              <button className="bg-white p-2 rounded w-full md:w-auto">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  const form = e.target
+
+                  const valueToSearch = Number(form.inputToSearch.value)
+                  treeFunctions.searchNode(valueToSearch)
+                }}
+                className="flex flex-col md:flex-row gap-4 items-start md:items-center w-full"
+              >
+                <h1 className="text-white text-lg md:text-xl">Buscar nodo:</h1>
+                <input
+                  type="number"
+                  name="inputToSearch"
+                  className="p-2 border border-gray-300 rounded w-full md:w-auto"
+                />
+                <button className="bg-white p-2 rounded w-full md:w-auto">
+                  Exacta
+                </button>
+              </form>
+              <button
+                onClick={() => treeFunctions.searchMinimiumNode()}
+                className="bg-white p-2 rounded w-full md:w-auto"
+              >
                 Mínimo
               </button>
-              <button className="bg-white p-2 rounded w-full md:w-auto">
+              <button
+                onClick={() => treeFunctions.searchMaximiumNode()}
+                className="bg-white p-2 rounded w-full md:w-auto"
+              >
                 Máximo
               </button>
             </div>

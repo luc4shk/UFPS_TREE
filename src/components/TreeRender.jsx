@@ -145,6 +145,16 @@ export default function TreeRender({ tree, values }) {
       if (values.inorden || values.preorden || values.postorden) {
         drawRecorrido(svg, values)
       }
+
+      if (values.toSearch) {
+        const nodoBuscar = root
+          .descendants()
+          .find((d) => d.data.name == values.toSearch)
+
+        const ruta = root.path(nodoBuscar)
+        pathNewNode(svg, ruta, null, 'buscar')
+      }
+
       drawLinks(svg, root.links(), values)
       drawNodes(svg, root.descendants(), root)
 
@@ -168,7 +178,8 @@ export default function TreeRender({ tree, values }) {
       .append('g')
       .attr('class', 'node')
       .attr('transform', function (d) {
-        const pos = positions[d.data.name] || { x: root.x0, y: root.y0 }
+        // Valores por defecto para evitar `undefined`
+        const pos = positions[d.data.name] || { x: 0, y: 0 }
         return `translate(${pos.x},${pos.y})`
       })
 
@@ -365,7 +376,7 @@ export default function TreeRender({ tree, values }) {
       })
       .transition()
       .duration((d) => {
-        if (firstLoad.current || values.toAdd) {
+        if (firstLoad.current || values.toAdd || values.randomNodes) {
           return d.target.data.name === values.toAdd ? 2000 : 1000
         } else {
           return d.target.data.name === values.toAdd ? 2000 : 0
@@ -417,6 +428,7 @@ export default function TreeRender({ tree, values }) {
           .style('fill', (d) => {
             if (values.toAdd == d.data.name) return 'dodgerblue'
             if (values.toDelete == d.data.name) return 'tomato'
+            if (values.toSearch == d.data.name) return 'violet'
             return '#999'
           })
           .style('stroke-width', (d) => {
@@ -425,6 +437,9 @@ export default function TreeRender({ tree, values }) {
             }
             if (action === 'eliminar') {
               doDeleteSteps(values.toDelete, d)
+            }
+            if (action === 'buscar') {
+              doSearchSteps(values.toSearch, d)
             }
             return values.toAdd === d.data.name ? 'black' : 'black'
           })
@@ -527,6 +542,7 @@ export default function TreeRender({ tree, values }) {
 
   const doDeleteSteps = (value, d, i) => {
     // Primero, verifica si el nodo actual coincide con el valor a eliminar
+    console.log(value, d.data.name)
     if (d.data.name === value) {
       setSteps((prev) => [
         ...prev,
@@ -534,6 +550,51 @@ export default function TreeRender({ tree, values }) {
           {`${value} == ${d.data.name} \u279E \u2705 \n \t`}
           <span style={{ color: 'green', fontWeight: 'bold' }}>
             Eliminando {value}...
+          </span>
+        </>,
+      ])
+      return // Salir si se encontró el nodo
+    } else {
+      // Si no coincide, muestra que son diferentes
+      setSteps((prev) => [
+        ...prev,
+        <>{`${value} == ${d.data.name} \u274C \t`}</>,
+      ])
+    }
+
+    // Luego verifica si el nodo actual es mayor o menor
+    if (Number(value) > Number(d.data.name)) {
+      setSteps((prev) => [
+        ...prev,
+        <>
+          {`${value} > ${d.data.name} \u279E \u2705 \n \t`}
+          <span
+            style={{ color: 'red', fontWeight: 'bold' }}
+          >{`Ir Derecha \n \n`}</span>
+        </>,
+      ])
+    } else {
+      setSteps((prev) => [
+        ...prev,
+        <>
+          {`${value} > ${d.data.name} \u279E \u274C \n \t`}
+          <span style={{ color: 'blue', fontWeight: 'bold' }}>
+            {`Ir Izquierda \n \n`}
+          </span>
+        </>,
+      ])
+    }
+  }
+
+  const doSearchSteps = (value, d) => {
+    // Primero, verifica si el nodo actual coincide con el valor a eliminar
+    if (d.data.name === value) {
+      setSteps((prev) => [
+        ...prev,
+        <>
+          {`${value} == ${d.data.name} \u279E \u2705 \n \t`}
+          <span style={{ color: 'green', fontWeight: 'bold' }}>
+            Nodo encontrado
           </span>
         </>,
       ])
