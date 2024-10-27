@@ -50,7 +50,6 @@ const useArbolBST = () => {
 
   //Método para añadir un nodo al arbol
   const insertarNodo = (query) => {
-    console.log('valora indersat', query, typeof query)
     const nuevoArbol = arbolBST.clonar()
     nuevoArbol.insertar(query)
     window.localStorage.setItem('arbol', JSON.stringify(nuevoArbol, 2, null))
@@ -84,17 +83,25 @@ const useArbolBST = () => {
   }
 
   const buscarNodoMayor = () => {
+    if (arbolBST.esVacio()) return false
     setValues((prev) => ({
       ...prev,
       toSearch: arbolBST.obtenerNodoMayor(),
     }))
+    return true
   }
 
   const buscarNodoMenor = () => {
+    if (arbolBST.esVacio()) return false
     setValues((prev) => ({
       ...prev,
       toSearch: arbolBST.obtenerNodoMenor(),
     }))
+    return true
+  }
+
+  const nodoInsertado = (query) => {
+    return arbolBST.esta(query)
   }
 
   //Método para vaciar el arbol
@@ -108,7 +115,6 @@ const useArbolBST = () => {
 
   const insertRandomNodes = (nodesNumber) => {
     const nuevoArbol = new ArbolBinarioBusqueda()
-    console.log(nodesNumber)
     nuevoArbol.insertarNodosAleatorios(nodesNumber)
     window.localStorage.setItem('arbol', JSON.stringify(nuevoArbol, 2, null))
     setArbolBST(nuevoArbol)
@@ -121,32 +127,38 @@ const useArbolBST = () => {
 
   const getPreOrden = () => {
     const preorden = arbolBST.preOrden()
+    if (!preorden) return false
     setValues((prev) => ({
       ...prev,
       postorden: null,
       inorden: null,
       preorden: preorden,
     }))
+    return true
   }
 
   const getPostOrden = () => {
     const postorden = arbolBST.postOrden()
+    if (!postorden) return false
     setValues((prev) => ({
       ...prev,
       preorden: null,
       inorden: null,
       postorden: postorden,
     }))
+    return true
   }
 
   const getInOrden = () => {
     const inorden = arbolBST.inOrden()
+    if (!inorden) return false
     setValues((prev) => ({
       ...prev,
       preorden: null,
       postorden: null,
       inorden: inorden,
     }))
+    return true
   }
 
   const resetValues = () => {
@@ -172,6 +184,7 @@ const useArbolBST = () => {
     buscarNodoMenor,
     vaciarArbol,
     insertRandomNodes,
+    nodoInsertado,
     getPreOrden,
     getPostOrden,
     getInOrden,

@@ -1,6 +1,8 @@
+import { useContext } from 'react'
 import { LayoutTree } from '../../components/LayoutTree'
 import TreeRender from '../../components/TreeRender'
 import useArbolBST from '../../hooks/useArbolBST'
+import { StepsContext } from '../../context/StepsContext'
 
 export const PracticaArbolBST = () => {
   const {
@@ -13,6 +15,7 @@ export const PracticaArbolBST = () => {
     buscarNodoMenor,
     vaciarArbol,
     insertRandomNodes,
+    nodoInsertado,
     getPreOrden,
     getPostOrden,
     getInOrden,
@@ -32,6 +35,7 @@ export const PracticaArbolBST = () => {
         searchMinimiumNode: buscarNodoMenor,
         deleteTree: vaciarArbol,
         createTreeByNodes: insertRandomNodes,
+        isInTree: nodoInsertado,
         getPreOrden,
         getPostOrden,
         getInOrden,

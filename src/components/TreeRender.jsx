@@ -10,8 +10,7 @@ import {
 export default function TreeRender({ tree, values }) {
   const [treeData, setTreeData] = useState(null)
   const [prevData, setPrevData] = useState(null)
-  const [positions, setPositions] = useState({}) // Objeto para almacenar las posiciones de los nodos
-  const { setSteps } = useContext(StepsContext) // Objeto para almacenar las posiciones de los nodos
+  const { positions, setSteps, setPositions } = useContext(StepsContext) // Objeto para almacenar las posiciones de los nodos
   const svgRef = useRef(null)
   const firstLoad = useRef(true)
 
@@ -68,6 +67,10 @@ export default function TreeRender({ tree, values }) {
     if (!treeData) return
 
     const updateTree = async () => {
+      if (Object.keys(tree).length == 0) {
+        setPositions({})
+      }
+
       const root = d3.hierarchy(treeData)
       const prevRoot = d3.hierarchy(prevData)
       const nuevoNodo = root
@@ -97,8 +100,14 @@ export default function TreeRender({ tree, values }) {
         .size([width, height])
         .separation((a, b) => 1)
 
+      const treeLayout2 = d3
+        .tree()
+        .size([width, height])
+        .separation((a, b) => 1)
+
       treeLayout(root)
       treeLayout(prevRoot)
+      svg.selectAll('*').remove() // Limpiar el SVG
 
       if (values.toAdd && root.descendants().length > 3) {
         drawLinks(svg, root.links(), values)
@@ -116,7 +125,9 @@ export default function TreeRender({ tree, values }) {
         //drawNodes2(svg, root.descendants(), root)
         showAddTree(svg, root.descendants(), root, positions, values)
       } else if (values.toAdd && root.descendants().length === 3) {
+        svg.selectAll('*').remove() // Limpiar el SVG
         addFirstNode(svg, root.descendants(), root, positions, values, setSteps)
+        return
       }
 
       if (
@@ -136,6 +147,7 @@ export default function TreeRender({ tree, values }) {
         await pathNewNode(svg, rutaSinNodoNuevo, null, 'eliminar')
 
         svg.selectAll('*').remove() // Limpiar el SVG
+
         drawLinks2(svg, root.links(), values)
         drawNodes(svg, root.descendants(), root)
         const dataTree = convertirATreeData(tree)
@@ -155,12 +167,9 @@ export default function TreeRender({ tree, values }) {
         pathNewNode(svg, ruta, null, 'buscar')
       }
 
+      //      svg.selectAll('*').remove() // Limpiar el SVG
       drawLinks(svg, root.links(), values)
       drawNodes(svg, root.descendants(), root)
-
-      //drawLinks(svg, root.links(), values)
-      //        drawNodes(svg, root.descendants(), root)
-      //addFirstNode(svg, root.descendants(), root, positions, values, setSteps)
     }
 
     updateTree()
@@ -179,7 +188,7 @@ export default function TreeRender({ tree, values }) {
       .attr('class', 'node')
       .attr('transform', function (d) {
         // Valores por defecto para evitar `undefined`
-        const pos = positions[d.data.name] || { x: 0, y: 0 }
+        const pos = positions[d.data.name] || { x: root.x0, y: root.y0 }
         return `translate(${pos.x},${pos.y})`
       })
 
@@ -219,7 +228,13 @@ export default function TreeRender({ tree, values }) {
     const nodeUpdate = gNode
       .merge(nodeEnter) // Actualiza los nodos existentes y añade los nuevos
       .transition()
-      .duration(750)
+      .duration((d) => {
+        if (values.toAdd || values.toDelete || values.randomNodes) {
+          return 750
+        } else {
+          return 0
+        }
+      })
       .attr('transform', function (d) {
         positions[d.data.name] = { x: d.x, y: d.y } // Actualizamos la posición del nodo
         return `translate(${d.x},${d.y})`
@@ -589,6 +604,7 @@ export default function TreeRender({ tree, values }) {
 
   const doSearchSteps = (value, d) => {
     // Primero, verifica si el nodo actual coincide con el valor a eliminar
+    console.log(d)
     if (d.data.name === value) {
       setSteps((prev) => [
         ...prev,
@@ -638,4 +654,3 @@ export default function TreeRender({ tree, values }) {
     </div>
   )
 }
-

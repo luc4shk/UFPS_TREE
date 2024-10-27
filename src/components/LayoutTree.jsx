@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { StepsContext } from '../context/StepsContext'
+import toast from 'react-hot-toast'
 
 export const LayoutTree = ({
   values,
@@ -11,7 +12,7 @@ export const LayoutTree = ({
   treeFunctions,
 }) => {
   const [selectedAction, setSelectedAction] = useState('')
-  const { steps, setSteps } = useContext(StepsContext)
+  const { steps, setSteps, setPositions } = useContext(StepsContext)
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-150 p-4">
@@ -43,11 +44,19 @@ export const LayoutTree = ({
                 //Obtenemos el formulario
                 const form = e.target
                 //Obtenemos el valor del input
-                const nodesToAdd = Number(form.inputNodesToAdd.value)
+                const nodesToAdd = form.inputNodesToAdd.value
 
-                if (nodesToAdd <= 0 || nodesToAdd > 30) return
+                if (nodesToAdd == '') return
 
-                treeFunctions.createTreeByNodes(nodesToAdd)
+                const valueNodesToAdd = Number(nodesToAdd)
+
+                if (valueNodesToAdd <= 0 || valueNodesToAdd > 30) {
+                  toast.error('Solo se permiten valores entre 1 y 30')
+                  return
+                }
+
+                toast.success('Creando nodos')
+                treeFunctions.createTreeByNodes(valueNodesToAdd)
               }}
               className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4"
             >
@@ -73,8 +82,22 @@ export const LayoutTree = ({
                 //Obtenemos el form
                 const form = e.target
                 //Obtenemos el valor del input
-                const valueToAdd = Number(form.inputToAdd.value)
-                if (valueToAdd <= 0 || valueToAdd > 99) return
+                const toAdd = form.inputToAdd.value
+
+                if (toAdd == '') return
+
+                const valueToAdd = Number(toAdd)
+
+                if (treeFunctions.isInTree(valueToAdd)) {
+                  toast.error('El valor ya se encuentra ingresado')
+                  return
+                }
+
+                if (valueToAdd <= 0 || valueToAdd > 99) {
+                  toast.error('Solo se permiten valores entre 1 y 99')
+                  return
+                }
+                toast.success('Insertando valor...')
                 treeFunctions.addNode(valueToAdd)
               }}
               className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4"
@@ -101,8 +124,23 @@ export const LayoutTree = ({
                 //Obtenemos el form
                 const form = e.target
                 //Obtenemos el valor del input
-                const valueToDelete = Number(form.inputToDelete.value)
 
+                const toDelete = form.inputToDelete.value
+
+                if (toDelete == '') return
+
+                const valueToDelete = Number(toDelete)
+
+                if (valueToDelete <= 0 || valueToDelete > 99) {
+                  toast.error('Solo se permiten valores entre 1 y 99')
+                  return
+                }
+
+                if (!treeFunctions.isInTree(valueToDelete)) {
+                  toast.error('El valor no se encuentra ingresado')
+                  return
+                }
+                toast.success('Eliminando...')
                 treeFunctions.deleteNode(valueToDelete)
               }}
               className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4"
@@ -129,7 +167,23 @@ export const LayoutTree = ({
                   e.preventDefault()
                   const form = e.target
 
-                  const valueToSearch = Number(form.inputToSearch.value)
+                  const toSearch = form.inputToSearch.value
+
+                  if (toSearch == '') return
+
+                  const valueToSearch = Number(toSearch)
+
+                  if (valueToSearch <= 0 || valueToSearch > 99) {
+                    toast.error('Solo se permiten valores entre 1 y 99')
+                    return
+                  }
+
+                  if (!treeFunctions.isInTree(valueToSearch)) {
+                    toast.error('El valor no se encuentra en ingresado')
+                    return
+                  }
+
+                  toast.success('Iniciando búsqueda...')
                   treeFunctions.searchNode(valueToSearch)
                 }}
                 className="flex flex-col md:flex-row gap-4 items-start md:items-center w-full"
@@ -145,13 +199,21 @@ export const LayoutTree = ({
                 </button>
               </form>
               <button
-                onClick={() => treeFunctions.searchMinimiumNode()}
+                onClick={() => {
+                  treeFunctions.searchMinimiumNode()
+                    ? toast.success('Buscando el nodo menor...')
+                    : null
+                }}
                 className="bg-white p-2 rounded w-full md:w-auto"
               >
                 Mínimo
               </button>
               <button
-                onClick={() => treeFunctions.searchMaximiumNode()}
+                onClick={() => {
+                  treeFunctions.searchMaximiumNode()
+                    ? toast.success('Buscando el nodo mayor...')
+                    : null
+                }}
                 className="bg-white p-2 rounded w-full md:w-auto"
               >
                 Máximo
@@ -163,19 +225,40 @@ export const LayoutTree = ({
           {selectedAction === 'Recorridos' && (
             <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4">
               <button
-                onClick={() => treeFunctions.getInOrden()}
+                onClick={() => {
+                  setSteps([
+                    'if this == null \n \t return \n Inorden(izquierda) \n visitar \n Inorden(derecha)',
+                  ])
+                  treeFunctions.getInOrden()
+                    ? toast.success('Comenzando Recorrido Inorden...')
+                    : null
+                }}
                 className="bg-white p-2 rounded w-full md:w-auto"
               >
                 Inorden
               </button>
               <button
-                onClick={() => treeFunctions.getPreOrden()}
+                onClick={() => {
+                  setSteps([
+                    'if this == null \n \t return \n vistar \n Preorden(izquierda) \n Preorden(derecha)',
+                  ])
+                  treeFunctions.getPreOrden()
+                    ? toast.success('Comenzando Recorrido Preorden...')
+                    : null
+                }}
                 className="bg-white p-2 rounded w-full md:w-auto"
               >
                 Preorden
               </button>
               <button
-                onClick={() => treeFunctions.getPostOrden()}
+                onClick={() => {
+                  setSteps([
+                    'if this == null\n \t return \n Postorden(izquierda) \n Postorden(derecha) \n visitar',
+                  ])
+                  treeFunctions.getPostOrden()
+                    ? toast.success('Comenzando Recorrido Postorden...')
+                    : null
+                }}
                 className="bg-white p-2 rounded w-full md:w-auto"
               >
                 Postorden
@@ -188,7 +271,30 @@ export const LayoutTree = ({
             <form
               onSubmit={(e) => {
                 e.preventDefault()
-                treeFunctions.deleteTree()
+                toast((t) => (
+                  <span className="flex flex-col gap-2">
+                    ¿Estas seguro de eliminar el árbol?
+                    <div className="flex gap-4 h-8">
+                      <button
+                        className="w-full bg-red-300 border-none rounded-xl"
+                        onClick={() => {
+                          treeFunctions.deleteTree()
+                          toast.dismiss(t.id)
+                        }}
+                      >
+                        <span className="text-red-800">Eliminar</span>
+                      </button>
+                      <button
+                        className="w-full bg-blue-300 border-none rounded-xl"
+                        onClick={() => {
+                          toast.dismiss(t.id)
+                        }}
+                      >
+                        <span className="text-blue-800">Cancelar</span>
+                      </button>
+                    </div>
+                  </span>
+                ))
               }}
               className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4"
             >
@@ -242,6 +348,7 @@ export const LayoutTree = ({
             onChange={(e) => {
               treeFunctions.resetValues()
               setSteps([])
+              toast.dismiss()
               setSelectedAction(e.target.value)
             }}
           >
