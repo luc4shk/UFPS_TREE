@@ -1,6 +1,5 @@
 import { useContext } from 'react'
 import { TiDelete } from 'react-icons/ti'
-import { motion } from 'framer-motion'
 import { FilterContext } from '../context/FilterContext'
 const NavBar = () => {
   //Llamamos al filter y a su función de seteo

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { StepsContext } from '../context/StepsContext'
 import toast from 'react-hot-toast'
@@ -12,7 +12,7 @@ export const LayoutTree = ({
   treeFunctions,
 }) => {
   const [selectedAction, setSelectedAction] = useState('')
-  const { steps, setSteps, setPositions } = useContext(StepsContext)
+  const { steps, setSteps } = useContext(StepsContext)
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-150 p-4">
@@ -179,7 +179,7 @@ export const LayoutTree = ({
                   }
 
                   if (!treeFunctions.isInTree(valueToSearch)) {
-                    toast.error('El valor no se encuentra en ingresado')
+                    toast.error('El valor no se encuentra ingresado')
                     return
                   }
 
@@ -240,7 +240,7 @@ export const LayoutTree = ({
               <button
                 onClick={() => {
                   setSteps([
-                    'if this == null \n \t return \n vistar \n Preorden(izquierda) \n Preorden(derecha)',
+                    'if this == null \n \t return \n visitar \n Preorden(izquierda) \n Preorden(derecha)',
                   ])
                   treeFunctions.getPreOrden()
                     ? toast.success('Comenzando Recorrido Preorden...')

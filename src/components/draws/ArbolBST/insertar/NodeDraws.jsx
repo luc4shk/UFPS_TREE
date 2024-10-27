@@ -1,6 +1,5 @@
 //Método que dibuja todos los nodos excepto el recien agregado
 
-import { g } from 'framer-motion/client'
 
 const createNodeGroup = (svg, nodes, root, positions) => {
   const gNode = svg.selectAll('g.node').data(nodes, function (d, i) {

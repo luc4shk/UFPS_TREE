@@ -1,7 +1,7 @@
 import useFilters from '../hooks/useFilters'
 import Card from './Card'
 import data from '../data'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 
 const CardList = () => {
   //Obtenemos la función para filtrar los árboles
@@ -20,7 +20,7 @@ const CardList = () => {
             img={item.img}
             bgCard={item.bgCard}
             bgButton={item.bgButton}
-            toConceptos={'#'}
+            toConceptos={item.toConceptos}
             toPracticar={item.toPracticar}
           />
         ))}

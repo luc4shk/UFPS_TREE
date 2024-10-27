@@ -6,7 +6,7 @@ const data = [
     complexity: 1,
     bgCard: '#7309b6',
     bgButton: '#b064d4',
-    toConceptos: '',
+    toConceptos: '/conceptos-BST',
     toPracticar: '/practicar-BST',
   },
   {
