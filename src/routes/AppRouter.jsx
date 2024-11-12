@@ -5,6 +5,7 @@ import { PracticaArbolBST } from '../pages/practice/PracticaArbolBST'
 import { PracticaArbolRojoNegro } from '../pages/practice/PracticaArbolRojoNegro'
 import { PracticaArbolB } from '../pages/practice/PracticaArbolB'
 import { ConceptosBST } from '../pages/concepts/ConceptosBST'
+import PruebaRN from './PruebaRN.jsx'
 
 const AppRouter = () => {
   return (
@@ -19,6 +20,7 @@ const AppRouter = () => {
           path="/practicar-Rojo-Negro"
           element={<PracticaArbolRojoNegro />}
         />
+        <Route path="/prueba-RN" element={<PruebaRN />} />
 
         {/* Rutas para conceptos */}
         <Route path="/conceptos-BST" element={<ConceptosBST />} />
