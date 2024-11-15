@@ -12,7 +12,6 @@ const PruebaRN = () => {
   const { arbolRN, raiz, values, insertarNodo, eliminarNodo } =
     useArbolRojiNegro()
   console.log('RAIZ', raiz)
-  console.log('CONVERTIDO:', arbolRN.convertirARNObjeto(arbolRN.getRaiz()))
 
   return (
     <>

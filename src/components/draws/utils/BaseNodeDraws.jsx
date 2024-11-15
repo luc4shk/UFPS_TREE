@@ -20,7 +20,7 @@ export const createNodeGroup = (svg, nodes, root, positions) => {
 }
 
 //Método para dibujar los circulos de cada nodo
-export const appendCircles = (nodeEnter, filterFunc) => {
+export const appendCircles = (nodeEnter, filterFunc, withNulls = false) => {
   let circle = nodeEnter.append('circle').attr('r', 0)
 
   //Validamos si hay una funcion para filtrar
@@ -32,8 +32,13 @@ export const appendCircles = (nodeEnter, filterFunc) => {
     .attr('r', 25)
     .attr('stroke', 'black')
     .style('visibility', function (d) {
+      if (withNulls) {
+        return d.data.name === undefined ? 'hidden' : 'visible'
+      }
       return d.data.name === 'Empty' || d.data.name === undefined
-        ? 'hidden'
+        ? //||
+          //d.data.name === null
+          'hidden'
         : 'visible'
     })
 
