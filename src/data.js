@@ -2,7 +2,7 @@
 const data = [
   {
     title: 'Árbol BST',
-    img: 'https://aprende.olimpiada-informatica.org/sites/default/files/inline-images/BST.png',
+    img: '/src/assets/arbolBST.png',
     complexity: 1,
     bgCard: '#7309b6',
     bgButton: '#b064d4',
@@ -29,7 +29,7 @@ const data = [
   },
   {
     title: 'Árbol Rojo-Negro',
-    img: 'https://cdn.javarush.com/images/article/9a5b5d15-c32b-4b6f-9f8e-b1d12908379c/1024.jpeg',
+    img: 'src/assets/arbolRN.png',
     complexity: 3,
     bgCard: '#0efe46',
     bgButton: '#6bfe8c',
