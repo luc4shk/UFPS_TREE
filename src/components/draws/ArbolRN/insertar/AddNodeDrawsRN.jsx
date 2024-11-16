@@ -16,7 +16,9 @@ export const addNodeDrawRN = (svg, nodes, root, positions, values) => {
   )
 
   const filteredNodeEnter = nodeEnter.filter(
-    (d) => d.data.name !== values.toAdd
+    (d) =>
+      d.data.name !== values.toAdd && // No es el nodo que estamos agregando
+      !(d.parent && d.parent.data.name === values.toAdd && d.data.name == null)
   )
 
   const circle = appendCircles(filteredNodeEnter, null)
@@ -38,7 +40,12 @@ export const addNodeDrawRN = (svg, nodes, root, positions, values) => {
 export const showAddTreeRN = (svg, nodes, root, positions, values) => {
   const { gNode, nodeEnter } = createNodeGroup(svg, nodes, root, positions)
 
-  const circle = appendCircles(nodeEnter, (d) => d.data.name !== values.toAdd)
+  const circle = appendCircles(
+    nodeEnter,
+    (d) =>
+      d.data.name !== values.toAdd && // No es el nodo que estamos agregando
+      !(d.parent && d.parent.data.name === values.toAdd && d.data.name == null)
+  )
 
   circle.attr('stroke-width', (d) => (d.data.name == values.toAdd ? '3' : '2'))
   const chartText = appendText(nodeEnter, values)
@@ -53,10 +60,9 @@ export const showAddTreeRN = (svg, nodes, root, positions, values) => {
   const nodeUpdate = mergeNodes(gNode, nodeEnter, positions)
   nodeUpdate
     .select('circle')
-    .duration((d) => (d.data.name == values.toAdd ? 750 : 0))
+    .duration((d) => (d.data.name === values.toAdd ? 750 : 0))
     .attr('stroke-width', (d) => (d.data.name == values.toAdd ? '3' : '2'))
     .style('fill', function (d) {
-      //if (d.data.name === values.toAdd) return 'red'
       return d.data.color === 0 ? 'black' : 'red'
     })
 }
@@ -72,27 +78,28 @@ export const addFirstNodeRN = (
 ) => {
   const { gNode, nodeEnter } = createNodeGroup(svg, nodes, root, positions)
 
-  const filteredNodeEnter = nodeEnter.filter((d) => d.data.name != undefined)
+  //const filteredNodeEnter = nodeEnter.filter((d) => d.data.name != undefined)
 
-  const circle = appendCircles(filteredNodeEnter, null)
+  const circle = appendCircles(nodeEnter, null, null)
 
   circle
-    .attr('stroke-width', (d) => (d.data.name == values.toAdd ? '3' : '2'))
-    .style('fill', function (d) {
-      console.log(d.data.name, values.toAdd)
-      //if (d.data.name === values.toAdd) {
-      setSteps((prev) => [
-        ...prev,
-        <>
-          <br />
-          <span style={{ color: 'green', fontWeight: 'bold' }}>
-            Insertando {values.toAdd}...
-          </span>
-        </>,
-      ])
+    .transition()
+    .duration('750')
+    .attr('stroke-width', (d) => (d.data.name == values.toAdd ? '2' : '2'))
+    .style('fill', (d) => {
+      if (d.data.name === values.toAdd) {
+        setSteps((prev) => [
+          //...prev,
+          <>
+            <br />
+            <span style={{ color: 'green', fontWeight: 'bold' }}>
+              Insertando {values.toAdd}...
+            </span>
+          </>,
+        ])
 
-      return 'red'
-      //}
+        return 'red'
+      }
       //return 'black'
     })
 

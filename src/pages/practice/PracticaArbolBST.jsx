@@ -19,6 +19,7 @@ export const PracticaArbolBST = () => {
     drawLinks,
   }
   const {
+    arbolBST,
     values,
     raiz,
     insertarNodo,
@@ -61,6 +62,7 @@ export const PracticaArbolBST = () => {
         values={values}
         convertirData={convertirDataBST}
         actions={actions}
+        treeIsEmpty={arbolBST.getAltura()}
       />
     </LayoutTree>
   )

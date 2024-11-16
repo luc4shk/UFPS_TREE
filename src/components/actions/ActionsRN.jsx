@@ -2,6 +2,7 @@ import { drawDeleteNodeRN } from '../draws/ArbolRN/eliminar/DeleteNodeDrawRN'
 import {
   drawLinksRN,
   drawLinksAfterRN,
+  drawFirstLinksRN,
 } from '../draws/ArbolRN/insertar/AddLinkDrawsRN'
 import {
   addNodeDrawRN,
@@ -37,8 +38,10 @@ export const addNodeRN = async (
 }
 
 //Método que ejecuta la lógica para pintar el primer nodo
+//actions.addFirst(svg, root, positions, values, setSteps)
 export const addFirstRN = (svg, root, positions, values, setSteps) => {
   svg.selectAll('*').remove() // Limpiar el SVG
+  drawFirstLinksRN(svg, root.links(), values, true)
   addFirstNodeRN(svg, root.descendants(), root, positions, values, setSteps)
 }
 

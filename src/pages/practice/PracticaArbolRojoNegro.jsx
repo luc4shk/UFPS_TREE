@@ -71,6 +71,7 @@ export const PracticaArbolRojoNegro = () => {
         values={values}
         convertirData={convertirDataRN}
         actions={actions}
+        treeIsEmpty={arbolRN.altura()}
       />
     </LayoutTree>
   )

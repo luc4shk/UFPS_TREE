@@ -9,8 +9,15 @@ export const createNodeGroup = (svg, nodes, root, positions) => {
     .append('g')
     .attr('class', 'node')
     .attr('transform', function (d) {
-      const pos = positions[d.data.name] || { x: root.x0, y: root.y0 }
+      const posKey =
+        d.data.name === null && d.parent
+          ? `${d.parent.data.name}-null-${d.parent.children.indexOf(d)}`
+          : d.data.name
+
+      const pos = positions[posKey] || { x: root.x0, y: root.y0 }
       return `translate(${pos.x},${pos.y})`
+      //const pos = positions[d.data.name] || { x: root.x0, y: root.y0 }
+      //return `translate(${pos.x},${pos.y})`
     })
 
   return {
@@ -36,9 +43,7 @@ export const appendCircles = (nodeEnter, filterFunc, withNulls = false) => {
         return d.data.name === undefined ? 'hidden' : 'visible'
       }
       return d.data.name === 'Empty' || d.data.name === undefined
-        ? //||
-          //d.data.name === null
-          'hidden'
+        ? 'hidden'
         : 'visible'
     })
 
@@ -66,7 +71,16 @@ export const mergeNodes = (gNode, nodeEnter, positions) => {
     .merge(nodeEnter) // Actualiza los nodos existentes y añade los nuevos
     .transition()
     .attr('transform', function (d) {
-      positions[d.data.name] = { x: d.x, y: d.y } // Actualizamos la posición del nodo
+      // Generamos un identificador único para nodos nulos
+      console.log(d)
+      const key =
+        d.data.name === null && d.parent
+          ? `${d.parent.data.name}-null-${d.parent.children.indexOf(d)}`
+          : d.data.name
+
+      // Guardamos la posición del nodo
+      positions[key] = { x: d.x, y: d.y }
+
       return `translate(${d.x},${d.y})`
     })
 

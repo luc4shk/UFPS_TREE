@@ -395,4 +395,17 @@ export class ArbolRojoNegro {
       padre: node.padre ? node.padre : null, // Recursión para el padre
     }
   }
+
+  altura(nodo = this.raiz) {
+    if (nodo === this.nulo) {
+      return -1 // La altura de un nodo nulo es 0
+    }
+
+    // Calcular la altura de los subárboles izquierdo y derecho
+    const alturaIzquierda = this.altura(nodo.izquierda)
+    const alturaDerecha = this.altura(nodo.derecha)
+
+    // La altura del árbol es el mayor entre ambas + 1 (por el nodo actual)
+    return Math.max(alturaIzquierda, alturaDerecha) + 1
+  }
 }

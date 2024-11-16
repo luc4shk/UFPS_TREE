@@ -11,6 +11,7 @@ const useTreeRender = ({
   setSteps,
   convertirData,
   actions,
+  treeIsEmpty,
 }) => {
   const [treeData, setTreeData] = useState(null)
   const [prevData, setPrevData] = useState(null)
@@ -26,24 +27,33 @@ const useTreeRender = ({
     })
   }, [tree])
 
+  //Reenderizamos otra vez el arbol cada vez que cambie la estructura o los valores
   useEffect(() => {
+    //Validamos si no hay data
     if (!treeData) return
 
+    //si el arbol esta vacio reseteamos las posiciones
     const updateTree = async () => {
-      if (Object.keys(tree).length == 0) {
+      if (treeIsEmpty === 0) {
         setPositions({})
       }
 
+      //Creamos la raiz del arbol para dibujar
       const root = d3.hierarchy(treeData)
+      //Creamos la raiz del arbol anterior para dibujar
       const prevRoot = d3.hierarchy(prevData)
 
+      //Definimos tamaños y margenes para el svg
       const width = 628
       const height = 416
       const margin = { top: 50, right: 50, bottom: 50, left: 50 }
       const svgWidth = width + margin.left + margin.right
       const svgHeight = height + margin.top + margin.bottom
 
+      //Limpiamos el svg
       d3.select('#tree-svg').selectAll('*').remove()
+
+      //Empezamos a dibujar
       const svg = d3
         .select('#tree-svg')
         .attr('width', svgWidth)
@@ -59,14 +69,15 @@ const useTreeRender = ({
       treeLayout(root)
       treeLayout(prevRoot)
       svg.selectAll('*').remove() // Limpiar el SVG
+
       if (
         values.toAdd &&
-        root.descendants().length > 3 &&
+        treeIsEmpty >= 1 &&
         root.find((d) => d.data.name == values.toAdd)
       ) {
         await actions.addNode(root, svg, firstLoad, positions, values, setSteps)
         return
-      } else if (values.toAdd && root.descendants().length === 3) {
+      } else if (values.toAdd && treeIsEmpty === 0) {
         actions.addFirst(svg, root, positions, values, setSteps)
         return
       }
@@ -105,7 +116,7 @@ const useTreeRender = ({
 
       //Dibujamos normalmente el arbol si no hay ninguna operación
       actions.drawLinks(svg, root.links(), values, firstLoad)
-      actions.drawNodes(svg, root.descendants(), root, positions, values, 'rn')
+      actions.drawNodes(svg, root.descendants(), root, positions, values)
     }
 
     updateTree()

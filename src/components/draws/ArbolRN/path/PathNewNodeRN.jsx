@@ -26,7 +26,7 @@ export const pathNewNodeRN = (svg, nodes, action, values, setSteps) => {
         .duration(400)
         .style('fill', (d) => {
           if (values.toAdd == d.data.name) return 'dodgerblue'
-          if (values.toDelete == d.data.name) return 'tomato'
+          if (values.toDelete == d.data.name) return 'orange'
           if (values.toSearch == d.data.name) return 'violet'
           return '#999'
         })
