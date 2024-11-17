@@ -48,7 +48,7 @@ export const PracticaArbolRojoNegro = () => {
   return (
     <LayoutTree
       values={values}
-      title={'Árbol Rojo y Leonardo'}
+      title={'Árbol Rojo y Negro'}
       containerColor={'#74f50b'}
       linkColor={'#74f50b'}
       treeFunctions={{

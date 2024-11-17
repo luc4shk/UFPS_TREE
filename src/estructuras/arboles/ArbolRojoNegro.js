@@ -1,46 +1,39 @@
-export class Nodo {
-  constructor(
-    valor,
-    color = 0,
-    izquierda = null,
-    derecha = null,
-    padre = null
-  ) {
-    this.valor = valor
-    this.color = color // 1 para rojo
-    this.izquierda = izquierda
-    this.derecha = derecha
-    this.padre = padre
-  }
-}
+import { NodoRN } from '../nodos/NodoRN'
 
 export class ArbolRojoNegro {
+  // Crea un ábol vacío
   constructor() {
-    this.nulo = new Nodo(null)
-    this.nulo.color = 0 // 0 para negro
+    this.nulo = new NodoRN(null) // Representa las hojas externas del árbol
+    this.nulo.color = 0  // Estas siempre son de color negro
     this.raiz = this.nulo
   }
 
+  // Obtiene la raíz del árbol
   getRaiz() {
     return this.raiz
   }
 
+  // Verifica si el árbol está vacío
   esVacio() {
     return this.raiz === this.nulo
   }
 
+  // Vacía el árbol asignando la raíz a un nodo nulo
   vaciar() {
     this.raiz = this.nulo
   }
 
+  // Inserción de un nuevo nodo
   insertar(valor) {
+    // Creación del nuevo nodo con el valor proporcionado
     valor = Number(valor)
-    const nuevoNodo = new Nodo(valor)
+    const nuevoNodo = new NodoRN(valor)
     nuevoNodo.izquierda = this.nulo
     nuevoNodo.derecha = this.nulo
     let nodoPadre = null
     let actual = this.raiz
 
+    // Buscamos la posición correcta donde insertar el nuevo nodo
     while (actual !== this.nulo) {
       nodoPadre = actual
       if (nuevoNodo.valor < actual.valor) {
@@ -50,6 +43,7 @@ export class ArbolRojoNegro {
       }
     }
 
+    // Una vez identificada la posición, establecemos el padre del nuevo nodo
     nuevoNodo.padre = nodoPadre
     if (nodoPadre === null) {
       this.raiz = nuevoNodo
@@ -59,124 +53,190 @@ export class ArbolRojoNegro {
       nodoPadre.derecha = nuevoNodo
     }
 
-    nuevoNodo.color = 1 // 1 para rojo
+    nuevoNodo.color = 1 // El nuevo nodo se recolorea a rojo
+
+    // Se aplican las rotaciones necesarias para mantener las propiedades del árbol
     this.arreglarInsercion(nuevoNodo)
   }
 
+  // Mueve el nodo derecho hacia arriba, convirtiendolo en el nuevo padre del subárbol
   rotarIzquierda(nodo) {
+    // Almacenamo el hijo derecho del nodo que se va a rotar
     const temp = nodo.derecha
+
+    // Reasignamos el hijo derecho del nodo al hijo izquierdo del nodo temp 
     nodo.derecha = temp.izquierda
+
+    // Si el hijo izquierdo no es nodo nulo, actualizamos su referencia al padre
     if (temp.izquierda !== this.nulo) {
       temp.izquierda.padre = nodo
     }
+
+    // El nodo temp tomará el lugar del nodo rotado
     temp.padre = nodo.padre
+
+    // Si el nodo rotado era la raíz, temp se convierte en la nueva raíz
     if (nodo.padre === null) {
       this.raiz = temp
-    } else if (nodo === nodo.padre.izquierda) {
+    } else if (nodo === nodo.padre.izquierda) { // Si el nodo rotado era hijo izquierdo o derecho, actualizamos la referencia correspondiente
       nodo.padre.izquierda = temp
     } else {
       nodo.padre.derecha = temp
     }
+
+    // El hijo izquiero de temp se asigna al nodo rotado
     temp.izquierda = nodo
+
+    // Actualizamos la referencia del padre del nodo rotado a temp
     nodo.padre = temp
   }
 
+  // Similar a la rotación izquierda, pero este mueve el nodo izquierdo hacia arriba
   rotarDerecha(nodo) {
+    // Almacenamos el hijo izquierdo del nodo que se va a rotar
     const temp = nodo.izquierda
+
+    // El hijo izquierdo del nodo se reasigna al nodo derecho de temp
     nodo.izquierda = temp.derecha
+
+    // Si el hijo derecho de temp no es nulo, actualizamos su referencia al padre
     if (temp.derecha !== this.nulo) {
       temp.derecha.padre = nodo
     }
+
+    // El nodo temp toma el lugar del nodo rotado
     temp.padre = nodo.padre
+
+    // Si el nodo rotado era la raíz, temp se convierte en la nueva raíz
     if (nodo.padre === null) {
       this.raiz = temp
-    } else if (nodo === nodo.padre.derecha) {
+    } else if (nodo === nodo.padre.derecha) { // Si el nodo rotado era hijo izquiero o derecho, actualizamos la referencia correspondiente
       nodo.padre.derecha = temp
     } else {
       nodo.padre.izquierda = temp
     }
+
+    // El hijo derecho de temp se asigna al nuevo nodo
     temp.derecha = nodo
+
+    // El padre del nodo rotado se asigna a temp
     nodo.padre = temp
   }
 
+  // Método que asegura que la inserción de un nuevo nodo no afecte las propiedades del árbol
   arreglarInsercion(nodo) {
+    // Iteramos mientras el nodo tenga padre y su color sea rojo
     while (nodo.padre && nodo.padre.color === 1) {
-      // 1 para rojo
+      
+      // Determinamos si el padre del nodo está en el lado izquierdo o derecho del abuelo
       if (nodo.padre === nodo.padre.padre.izquierda) {
+
+        // Obtenemos el tio del nodo
         const tio = nodo.padre.padre.derecha
-        if (tio && tio.color === 1) {
-          // 1 para rojo
-          nodo.padre.color = 0 // 0 para negro
-          tio.color = 0
-          nodo.padre.padre.color = 1
-          nodo = nodo.padre.padre
+
+        if (tio && tio.color === 1) { // CASO 1: Tío rojo
+          
+          nodo.padre.color = 0 // Recolorear el padre a negro
+          tio.color = 0 // Recolorear el tio a negro
+          nodo.padre.padre.color = 1 // Recolorear el abuelo a rojo
+          nodo = nodo.padre.padre // Moverse al abuelo para verificar si hay mas violaciones 
+
         } else {
-          if (nodo === nodo.padre.derecha) {
+
+          if (nodo === nodo.padre.derecha) { // CASO 2: Tío negro y nodo es hijo derecho
             nodo = nodo.padre
-            this.rotarIzquierda(nodo)
+            this.rotarIzquierda(nodo) // Rotamos el padre a la izquierda
           }
-          nodo.padre.color = 0 // 0 para negro
-          nodo.padre.padre.color = 1
-          this.rotarDerecha(nodo.padre.padre)
+          nodo.padre.color = 0 // Recolorear el padre a negro
+          nodo.padre.padre.color = 1 // Recolorear el abuelo a rojo
+          this.rotarDerecha(nodo.padre.padre) // Rotamos el abuelo a la derecha
         }
-      } else {
+
+      } else { // Simétrico: Si el padre es hijo derecho
+
         const tio = nodo.padre.padre.izquierda
+
         if (tio && tio.color === 1) {
-          // 1 para rojo
-          nodo.padre.color = 0 // 0 para negro
+
+          nodo.padre.color = 0 
           tio.color = 0
           nodo.padre.padre.color = 1
           nodo = nodo.padre.padre
+
         } else {
+
           if (nodo === nodo.padre.izquierda) {
             nodo = nodo.padre
             this.rotarDerecha(nodo)
           }
-          nodo.padre.color = 0 // 0 para negro
+          nodo.padre.color = 0 
           nodo.padre.padre.color = 1
           this.rotarIzquierda(nodo.padre.padre)
+          
         }
       }
     }
-    this.raiz.color = 0 // 0 para negro
+
+    this.raiz.color = 0 // Aseguramos que la raíz sea siempre negra
   }
 
+  // Método encargado de eliminar un nodo del árbol
   eliminar(valor) {
+
+    // Se busca el nodo a eliminar, si este no se encuentra, se detiene la ejecución
     valor = Number(valor)
     let nodo = this.buscarNodo(this.raiz, valor)
     if (nodo === this.nulo) return // No se encontró el nodo
 
+    // Almacenamos el color original del nodo original, para luego determinar si es necesario arreglar
     let nodoOriginalColor = nodo.color
     let reemplazo
 
+    // CASO 1: Nodo tiene menos de 2 hijos (uno o ninguno)
     if (nodo.izquierda === this.nulo) {
-      reemplazo = nodo.derecha
+
+      reemplazo = nodo.derecha // Si el nodo a eliminar no tiene hijo izquierdo, se reemplaza por su hijo derecho
       this.transplantar(nodo, nodo.derecha)
+
     } else if (nodo.derecha === this.nulo) {
-      reemplazo = nodo.izquierda
+
+      reemplazo = nodo.izquierda // Si el nodo a eliminar no tiene hijo derecho, se reemplaza por su hijo izquierdo
       this.transplantar(nodo, nodo.izquierda)
-    } else {
+
+    } else { // CASO 2: Nodo tiene ambos hijos
+      
+      // Buscamos al sucesor correspondiente al valor minimo del subarbol derecho
       let sucesor = this.minimo(nodo.derecha)
-      nodoOriginalColor = sucesor.color
+      nodoOriginalColor = sucesor.color // Actualizamos el color del nodo original con el del sucesor
+
+      // Determinamos el reemplazo del sucesor
       reemplazo = sucesor.derecha
-      if (sucesor.padre === nodo) {
-        reemplazo.padre = sucesor
+      if (sucesor.padre === nodo) { // Si el sucesor es hijo directo del nodo a eliminar
+        reemplazo.padre = sucesor // Actualizamos el padre del reemplazo
       } else {
-        this.transplantar(sucesor, sucesor.derecha)
-        sucesor.derecha = nodo.derecha
+        this.transplantar(sucesor, sucesor.derecha) // Si no es hijo directo, se reemplaza el sucesor con su hijo derecho
+        sucesor.derecha = nodo.derecha // se transfiere el hijo derecho del sucesor
         sucesor.derecha.padre = sucesor
       }
+
+      // Reemplazamos el nodo a eliminar con el sucesor
       this.transplantar(nodo, sucesor)
+
+      // Se ajustan las referencias de los hijos izquierdo y derecho del sucesor y se mantiene el color original del nodo eliminado en el sucesor
       sucesor.izquierda = nodo.izquierda
       sucesor.izquierda.padre = sucesor
       sucesor.color = nodo.color
+
     }
 
+    // Si el color original del nodo eliminado era negro, se corrige el arbol
     if (nodoOriginalColor === 0) {
       this.arreglarEliminacion(reemplazo)
     }
+
   }
 
+  // Método encargado de realizar la busqueda de un nodo especifico
   buscarNodo(nodo, valor) {
     while (nodo !== this.nulo && valor !== nodo.valor) {
       nodo = valor < nodo.valor ? nodo.izquierda : nodo.derecha
@@ -184,6 +244,7 @@ export class ArbolRojoNegro {
     return nodo
   }
 
+  // Método encargado de buscar el nodo con valor mínimo del árbol
   getMinimo(nodo = this.raiz) {
     if (this.esVacio()) return null
 
@@ -193,6 +254,7 @@ export class ArbolRojoNegro {
     return nodo // Nodo con el valor mínimo
   }
 
+  // Método encargado de buscar el nodo con valor máximo del árbol
   getMaximo(nodo = this.raiz) {
     if (this.esVacio()) return null
 
@@ -202,21 +264,24 @@ export class ArbolRojoNegro {
     return nodo // Nodo con el valor máximo
   }
 
+  // Método que determina si un valor especifico se encuentra dentor del árbol
   contiene(valor) {
     return this.buscarNodo(this.raiz, valor) !== this.nulo
   }
 
+  // Método encargado de transplantar el subárbol nodoU con el subárbol de nodoV
   transplantar(nodoU, nodoV) {
     if (nodoU.padre === null) {
-      this.raiz = nodoV
+      this.raiz = nodoV // Si nodo U es la raíz, actualizamos la raíz a nodoV
     } else if (nodoU === nodoU.padre.izquierda) {
-      nodoU.padre.izquierda = nodoV
+      nodoU.padre.izquierda = nodoV // Si nodoU es hijo izquierdo o derecho, actualizamos la referencia correspondiente
     } else {
       nodoU.padre.derecha = nodoV
     }
-    nodoV.padre = nodoU.padre
+    nodoV.padre = nodoU.padre // Actualizamos el padre de nodoV para que apunte al padre de nodoU
   }
 
+  // Método auxiliar que devuelve el valor mínimo en el subárbol que comienza en nodo dado
   minimo(nodo) {
     while (nodo.izquierda !== this.nulo) {
       nodo = nodo.izquierda
@@ -224,21 +289,29 @@ export class ArbolRojoNegro {
     return nodo
   }
 
+  // Encargado de restaurar las propiedades del árbol despues de eliminar un nodo
   arreglarEliminacion(nodo) {
+    // Iteramos mientras el nodo actual no sea la raíz y su color sea negro
     while (nodo !== this.raiz && nodo.color === 0) {
+
+      // Determinamos si el nodo es hijo izquierdo o derecho
       if (nodo === nodo.padre.izquierda) {
+
+        // Obtenemos el hermano derecho del nodo actual
         let hermano = nodo.padre.derecha
-        if (hermano.color === 1) {
-          hermano.color = 0
-          nodo.padre.color = 1
-          this.rotarIzquierda(nodo.padre)
+        if (hermano.color === 1) { // Si el hermano es rojo
+          hermano.color = 0 // Recoloreamos el hermano
+          nodo.padre.color = 1 // Recoloreamos el padre
+          this.rotarIzquierda(nodo.padre) // Rotamos el padre hacia la izquierda
           hermano = nodo.padre.derecha
         }
-        if (hermano.izquierda.color === 0 && hermano.derecha.color === 0) {
-          hermano.color = 1
-          nodo = nodo.padre
+        if (hermano.izquierda.color === 0 && hermano.derecha.color === 0) { // Hermano negro con ambos hijos negros
+          hermano.color = 1 // Recoloreamos el hermano a rojo
+          nodo = nodo.padre // Nos movemos hacia arriba
         } else {
-          if (hermano.derecha.color === 0) {
+
+          // Hermano negro con hijos de colores mixtos
+          if (hermano.derecha.color === 0) { // Si el hijo derecho del hermano es negro
             hermano.izquierda.color = 0
             hermano.color = 1
             this.rotarDerecha(hermano)
@@ -249,8 +322,11 @@ export class ArbolRojoNegro {
           hermano.derecha.color = 0
           this.rotarIzquierda(nodo.padre)
           nodo = this.raiz
+
         }
       } else {
+
+        // Procedimiento simétrico al caso cuando el nodo es hijo izquierdo, per con direcciones invertidas
         let hermano = nodo.padre.izquierda
         if (hermano.color === 1) {
           hermano.color = 0
@@ -276,9 +352,12 @@ export class ArbolRojoNegro {
         }
       }
     }
+    
+    // Aseguramos que el nodo actual sea negro
     nodo.color = 0
   }
 
+  // Método encargado de clonar el árbol
   clonar() {
     const clonarNodo = (nodo) => {
       if (nodo === this.nulo) {
@@ -286,7 +365,7 @@ export class ArbolRojoNegro {
       }
 
       // Crea un nuevo nodo con el mismo valor y color
-      const nuevoNodo = new Nodo(nodo.valor)
+      const nuevoNodo = new NodoRN(nodo.valor)
       nuevoNodo.color = nodo.color
 
       // Clona recursivamente los hijos izquierdo y derecho
@@ -312,6 +391,7 @@ export class ArbolRojoNegro {
     return nuevoArbol
   }
 
+  // Recorridos
   preOrden() {
     const resultado = []
     this.recorrerPreorden(this.raiz, resultado)

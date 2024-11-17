@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { stringify, parse, toJSON, fromJSON } from 'flatted'
 //import { ArbolRojiNegro } from '../estructuras/arboles/ArbolRojoNegro'
-import { ArbolRojoNegro, Nodo } from '../estructuras/arboles/ArbolRojoNegro'
+import { ArbolRojoNegro } from '../estructuras/arboles/ArbolRojoNegro'
 
 const useArbolRojiNegro = () => {
   const [arbolRN, setArbolRN] = useState(new ArbolRojoNegro())
