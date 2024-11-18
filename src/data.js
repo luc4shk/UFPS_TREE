@@ -33,7 +33,7 @@ const data = [
     complexity: 3,
     bgCard: '#0efe46',
     bgButton: '#6bfe8c',
-    toConceptos: '',
+    toConceptos: '/conceptos-RBT',
     toPracticar: '/practicar-Rojo-Negro',
   },
 ]

@@ -10,7 +10,7 @@ import { drawNodesRN } from '../../components/draws/ArbolRN/mostrar/AllNodesDraw
 export const PracticaArbolRojoNegro = () => {
   window.addEventListener('beforeunload', function (event) {
     // Personalizar el mensaje de confirmación (en la mayoría de navegadores, el mensaje no es personalizable)
-    const mensaje = 'xddd'
+    const mensaje = ''
     alert(mensaje)
 
     // Establecer el mensaje en el evento (esto es necesario para que el navegador lo muestre)
