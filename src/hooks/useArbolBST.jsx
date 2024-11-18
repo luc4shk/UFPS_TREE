@@ -175,6 +175,7 @@ const useArbolBST = () => {
     window.localStorage.removeItem('values')
   }
   return {
+    arbolBST,
     values,
     raiz,
     insertarNodo,

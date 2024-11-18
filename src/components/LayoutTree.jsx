@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { StepsContext } from '../context/StepsContext'
 import toast from 'react-hot-toast'
@@ -13,6 +13,8 @@ export const LayoutTree = ({
 }) => {
   const [selectedAction, setSelectedAction] = useState('')
   const { steps, setSteps } = useContext(StepsContext)
+
+  useEffect(() => setSteps([]), [])
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-150 p-4">
@@ -226,12 +228,14 @@ export const LayoutTree = ({
             <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4">
               <button
                 onClick={() => {
+                  const inorden = treeFunctions.getInOrden()
+                  if (!inorden) return
+                  inorden
+                    ? toast.success('Comenzando Recorrido Inorden...')
+                    : null
                   setSteps([
                     'if this == null \n \t return \n Inorden(izquierda) \n visitar \n Inorden(derecha)',
                   ])
-                  treeFunctions.getInOrden()
-                    ? toast.success('Comenzando Recorrido Inorden...')
-                    : null
                 }}
                 className="bg-white p-2 rounded w-full md:w-auto"
               >
@@ -239,12 +243,14 @@ export const LayoutTree = ({
               </button>
               <button
                 onClick={() => {
+                  const preorden = treeFunctions.getPreOrden()
+                  if (!preorden) return
+                  preorden
+                    ? toast.success('Comenzando Recorrido Preorden...')
+                    : null
                   setSteps([
                     'if this == null \n \t return \n visitar \n Preorden(izquierda) \n Preorden(derecha)',
                   ])
-                  treeFunctions.getPreOrden()
-                    ? toast.success('Comenzando Recorrido Preorden...')
-                    : null
                 }}
                 className="bg-white p-2 rounded w-full md:w-auto"
               >
@@ -252,12 +258,14 @@ export const LayoutTree = ({
               </button>
               <button
                 onClick={() => {
+                  const postorden = treeFunctions.getPostOrden()
+                  if (!postorden) return
+                  postorden
+                    ? toast.success('Comenzando Recorrido Postorden...')
+                    : null
                   setSteps([
                     'if this == null\n \t return \n Postorden(izquierda) \n Postorden(derecha) \n visitar',
                   ])
-                  treeFunctions.getPostOrden()
-                    ? toast.success('Comenzando Recorrido Postorden...')
-                    : null
                 }}
                 className="bg-white p-2 rounded w-full md:w-auto"
               >

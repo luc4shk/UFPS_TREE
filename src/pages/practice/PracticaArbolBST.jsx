@@ -1,11 +1,25 @@
-import { useContext } from 'react'
 import { LayoutTree } from '../../components/LayoutTree'
 import TreeRender from '../../components/TreeRender'
+import { drawNodes } from '../../components/draws/ArbolBST/mostrar/AllNodesDraws'
+import { drawLinks } from '../../components/draws/ArbolBST/insertar/AddLinkDraws'
 import useArbolBST from '../../hooks/useArbolBST'
-import { StepsContext } from '../../context/StepsContext'
+import { convertirDataBST } from '../../components/draws/utils/ConvertirData'
+import {
+  addNode,
+  addFirst,
+  deleteNode,
+} from '../../components/actions/ActionsBST'
 
 export const PracticaArbolBST = () => {
+  const actions = {
+    addNode,
+    addFirst,
+    deleteNode,
+    drawNodes,
+    drawLinks,
+  }
   const {
+    arbolBST,
     values,
     raiz,
     insertarNodo,
@@ -43,7 +57,13 @@ export const PracticaArbolBST = () => {
       }}
       values={values}
     >
-      <TreeRender tree={!raiz ? {} : raiz} values={values} />
+      <TreeRender
+        tree={!raiz ? {} : raiz}
+        values={values}
+        convertirData={convertirDataBST}
+        actions={actions}
+        treeIsEmpty={arbolBST.getAltura()}
+      />
     </LayoutTree>
   )
 }

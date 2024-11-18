@@ -1,84 +1,59 @@
 import * as d3 from 'd3'
 import { useState, useRef, useEffect } from 'react'
-import {
-  addFirstNode,
-  addNodeDraw,
-  showAddTree,
-} from '../components/draws/ArbolBST/insertar/AddNodeDraws'
-import {
-  drawLinks,
-  drawLinksAfter,
-} from '../components/draws/ArbolBST/insertar/AddLinkDraws'
 import { drawRecorrido } from '../components/draws/ArbolBST/recorrido/Recorrido'
-import { drawNodes } from '../components/draws/ArbolBST/mostrar/AllNodesDraws'
 import { pathNewNode } from '../components/draws/ArbolBST/path/PathNewNode'
-import { drawDeleteNode } from '../components/draws/ArbolBST/eliminar/DeleteNodeDraws'
 
-const useTreeRender = ({ tree, values, positions, setPositions, setSteps }) => {
+const useTreeRender = ({
+  tree,
+  values,
+  positions,
+  setPositions,
+  setSteps,
+  convertirData,
+  actions,
+  treeIsEmpty,
+}) => {
   const [treeData, setTreeData] = useState(null)
   const [prevData, setPrevData] = useState(null)
   const svgRef = useRef(null)
   const firstLoad = useRef(true)
 
-  // Función para convertir el árbol de datos en formato jerárquico
-  const convertirATreeData = (node) => {
-    if (!node) return null
-
-    const children = []
-
-    if (node.izq) {
-      children.push(convertirATreeData(node.izq))
-    } else {
-      // Si el hijo izquierdo es null, añadimos un nodo invisible
-      children.push({
-        name: 'Empty', // Nodo invisible
-        children: [],
-      })
-    }
-
-    if (node.der) {
-      children.push(convertirATreeData(node.der))
-    } else {
-      // Si el hijo derecho es null, añadimos un nodo invisible
-      children.push({
-        name: 'Empty', // Nodo invisible
-        children: [],
-      })
-    }
-
-    return {
-      name: node.info,
-      children: children.filter((child) => child !== null), // Filtra nodos null
-    }
-  }
-
   // Cada vez que el árbol cambie, lo convertimos a la estructura jerárquica
   useEffect(() => {
-    const dataTree = convertirATreeData(tree)
+    const dataTree = convertirData(tree)
     setTreeData((prev) => {
       setPrevData(prev)
       return dataTree
     })
   }, [tree])
 
+  //Reenderizamos otra vez el arbol cada vez que cambie la estructura o los valores
   useEffect(() => {
+    //Validamos si no hay data
     if (!treeData) return
 
+    //si el arbol esta vacio reseteamos las posiciones
     const updateTree = async () => {
-      if (Object.keys(tree).length == 0) {
+      if (treeIsEmpty === 0) {
         setPositions({})
       }
 
+      //Creamos la raiz del arbol para dibujar
       const root = d3.hierarchy(treeData)
+      //Creamos la raiz del arbol anterior para dibujar
       const prevRoot = d3.hierarchy(prevData)
 
+      //Definimos tamaños y margenes para el svg
       const width = 628
       const height = 416
       const margin = { top: 50, right: 50, bottom: 50, left: 50 }
       const svgWidth = width + margin.left + margin.right
       const svgHeight = height + margin.top + margin.bottom
 
+      //Limpiamos el svg
       d3.select('#tree-svg').selectAll('*').remove()
+
+      //Empezamos a dibujar
       const svg = d3
         .select('#tree-svg')
         .attr('width', svgWidth)
@@ -97,28 +72,13 @@ const useTreeRender = ({ tree, values, positions, setPositions, setSteps }) => {
 
       if (
         values.toAdd &&
-        root.descendants().length > 3 &&
+        treeIsEmpty >= 1 &&
         root.find((d) => d.data.name == values.toAdd)
       ) {
-        const nuevoNodo = root
-          .descendants()
-          .find((d) => d.data.name === values.toAdd)
-
-        drawLinks(svg, root.links(), values, firstLoad)
-        addNodeDraw(svg, root.descendants(), root, positions, values)
-
-        const ruta = root.path(nuevoNodo)
-        const rutaSinNodoNuevo = ruta.slice(0, ruta.length - 1)
-        await pathNewNode(svg, rutaSinNodoNuevo, 'insertar', values, setSteps)
-
-        svg.selectAll('*').remove() // Limpiar el SVG
-
-        drawLinksAfter(svg, root.links(), values, firstLoad)
-        showAddTree(svg, root.descendants(), root, positions, values)
+        await actions.addNode(root, svg, firstLoad, positions, values, setSteps)
         return
-      } else if (values.toAdd && root.descendants().length === 3) {
-        svg.selectAll('*').remove() // Limpiar el SVG
-        addFirstNode(svg, root.descendants(), root, positions, values, setSteps)
+      } else if (values.toAdd && treeIsEmpty === 0) {
+        actions.addFirst(svg, root, positions, values, setSteps)
         return
       }
 
@@ -126,25 +86,18 @@ const useTreeRender = ({ tree, values, positions, setPositions, setSteps }) => {
         values.toDelete &&
         prevRoot.find((d) => d.data.name == values.toDelete)
       ) {
-        svg.selectAll('*').remove() // Limpiar el SVG
-        const nodoEliminar = prevRoot
-          .descendants()
-          .find((d) => d.data.name == values.toDelete)
-
-        const ruta = prevRoot.path(nodoEliminar)
-        const rutaSinNodoNuevo = ruta
-        drawLinks(svg, prevRoot.links(), values, firstLoad)
-        //drawNodes2(svg, prevRoot.descendants(), prevRoot)
-        drawDeleteNode(svg, prevRoot.descendants(), prevRoot, positions)
-
-        await pathNewNode(svg, rutaSinNodoNuevo, 'eliminar', values, setSteps)
-
-        svg.selectAll('*').remove() // Limpiar el SVG
-
-        drawLinksAfter(svg, root.links(), values)
-        drawNodes(svg, root.descendants(), root, positions, values)
-        const dataTree = convertirATreeData(tree)
-        setPrevData(dataTree)
+        actions.deleteNode(
+          svg,
+          root,
+          prevRoot,
+          values,
+          firstLoad,
+          positions,
+          setSteps,
+          convertirData,
+          setPrevData,
+          tree
+        )
         return
       }
 
@@ -162,8 +115,8 @@ const useTreeRender = ({ tree, values, positions, setPositions, setSteps }) => {
       }
 
       //Dibujamos normalmente el arbol si no hay ninguna operación
-      drawLinks(svg, root.links(), values, firstLoad)
-      drawNodes(svg, root.descendants(), root, positions, values)
+      actions.drawLinks(svg, root.links(), values, firstLoad)
+      actions.drawNodes(svg, root.descendants(), root, positions, values)
     }
 
     updateTree()
