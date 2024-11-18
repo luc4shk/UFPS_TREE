@@ -1,8 +1,11 @@
 //Arreglo con los árboles
+import arbolBST from '/arbolBST.png'
+import arbolRN from '/arbolRN.png'
+
 const data = [
   {
     title: 'Árbol BST',
-    img: '/src/assets/arbolBST.png',
+    img: arbolBST,
     complexity: 1,
     bgCard: '#7309b6',
     bgButton: '#b064d4',
@@ -29,7 +32,7 @@ const data = [
   },
   {
     title: 'Árbol Rojo-Negro',
-    img: 'src/assets/arbolRN.png',
+    img: arbolRN,
     complexity: 3,
     bgCard: '#0efe46',
     bgButton: '#6bfe8c',
