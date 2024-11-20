@@ -1,6 +1,7 @@
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import Home from '../pages/Home'
-import { PracticaArbolAVL } from '../pages/practice/PracticaArbolAVL'
+// import { PracticaArbolAVL } from '../pages/practice/PracticaArbolAVL'
+import { PracticaArbolAVL } from "../pages/practice/PracticaArbolAVL.jsx";
 import { PracticaArbolBST } from '../pages/practice/PracticaArbolBST'
 import { PracticaArbolRojoNegro } from '../pages/practice/PracticaArbolRojoNegro'
 import { PracticaArbolB } from '../pages/practice/PracticaArbolB'

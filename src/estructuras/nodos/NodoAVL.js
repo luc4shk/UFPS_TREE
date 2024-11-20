@@ -1,6 +1,4 @@
-import NodoBinario from "./NodoBinario";
-
-export class NodoAVL extends NodoBinario {
+export class NodoAVL {
   /**
    * Constructor para la clase NodoAVL.
    * @param {NodoAVL} padre - Nodo padre del nodo actual.
@@ -10,33 +8,35 @@ export class NodoAVL extends NodoBinario {
    * @param {NodoBinario} der - Nodo hijo derecho.
    */
   constructor(padre = null, bal = 0, info = null, izq = null, der = null) {
-    super(info, izq, der); // Llama al constructor de la clase base
+    this.info = info;
+    this.izq = izq;
+    this.der = der;
     this.padre = padre;
     this.bal = bal;
   }
 
   getInfo() {
-    return super.getInfo();
+    return this.info;
   }
 
   setInfo(info) {
-    super.setInfo(info);
+    this.info = info;
   }
 
   getIzq() {
-    return super.getIzq();
+    return this.izq;
   }
 
   setIzq(izq) {
-    super.setIzq(izq);
+    this.izq = izq;
   }
 
   getDer() {
-    return super.getDer();
+    return this.der;
   }
 
   setDer(der) {
-    super.setDer(der);
+    this.der = der;
   }
 
   getPadre() {
@@ -47,7 +47,7 @@ export class NodoAVL extends NodoBinario {
     this.padre = padre;
   }
 
-  getBalance () {
+  getBalance() {
     return Number(this.balance);
   }
 

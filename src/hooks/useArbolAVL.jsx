@@ -1,13 +1,11 @@
-import { useState,  } from 'react'
-import { stringify, } from 'flatted'
-//import { ArbolRojiNegro } from '../estructuras/arboles/ArbolRojoNegro'
-import { ArbolRojoNegro } from '../estructuras/arboles/ArbolRojoNegro'
+import { useState } from "react";
+import { ArbolAVL } from "../estructuras/arboles/ArbolAVL";
 
-const useArbolRojiNegro = () => {
-  const [arbolRN, setArbolRN] = useState(new ArbolRojoNegro())
+const useArbolAVL = () => {
+  const [arbolAVL, setArbolAVL] = useState(new ArbolAVL());
 
-  //Estado para manejar la raíz del arbol BST
-  const [raiz, setRaiz] = useState(arbolRN.getRaiz() || '')
+  //Estado para manejar la raíz del arbol AVL
+  const [raiz, setRaiz] = useState(arbolAVL.getRaiz() || "");
 
   //Estado para manejar las query del usuario, numero a ingresar y eliminar
   const [values, setValues] = useState({
@@ -18,124 +16,124 @@ const useArbolRojiNegro = () => {
     preorden: null,
     postorden: null,
     inorden: null,
-  })
+  });
 
   const insertarNodo = (query) => {
-    const nuevoArbol = arbolRN.clonar()
-    nuevoArbol.insertar(query)
-    console.log(nuevoArbol)
-    //window.localStorage.setItem('arbolRN', JSON.stringify(nuevoArbol, 2, null))
-    setArbolRN(nuevoArbol)
-    setRaiz(nuevoArbol.getRaiz()) // Actualizar la raíz después de la inserción
+    const nuevoArbol = arbolAVL.clonar();
+    nuevoArbol.insertar(query);
+    console.log(nuevoArbol);
+    setArbolAVL(nuevoArbol);
+    setRaiz(nuevoArbol.getRaiz()); // Actualizar la raíz después de la inserción
     setValues((prev) => ({
       ...prev,
       toAdd: Number(query),
-    }))
-  }
+    }));
+  };
 
+  //QUEDAMOS AQUÍ
   const eliminarNodo = (query) => {
-    const nuevoArbol = arbolRN.clonar()
-    nuevoArbol.eliminar(query)
+    const nuevoArbol = arbolAVL.clonar();
+    nuevoArbol.eliminar(query);
     //window.localStorage.setItem('arbolRN', JSON.stringify(nuevoArbol, 2, null))
-    setArbolRN(nuevoArbol)
-    setRaiz(nuevoArbol.getRaiz()) // Actualizar la raíz después de la inserción
+    setArbolAVL(nuevoArbol);
+    setRaiz(nuevoArbol.getRaiz()); // Actualizar la raíz después de la inserción
     setValues((prev) => ({
       ...prev,
       toDelete: Number(query),
       toAdd: null,
-    }))
-  }
+    }));
+  };
 
   const isInTree = (valor) => {
-    return arbolRN.contiene(valor)
-  }
+    return arbolAVL.contiene(valor);
+  };
 
   const buscarNodoExacto = (query) => {
     setValues((prev) => ({
       ...prev,
       toSearch: Number(query),
-    }))
-  }
+    }));
+  };
 
   const buscarNodoMayor = () => {
-    if (arbolRN.esVacio()) return false
+    if (arbolAVL.esVacio()) return false;
     setValues((prev) => ({
       ...prev,
-      toSearch: arbolRN.getMaximo().valor,
-    }))
-    return true
-  }
+      toSearch: arbolAVL.getMaximo().valor, //valor seria info?
+    }));
+    return true;
+  };
 
   const buscarNodoMenor = () => {
-    if (arbolRN.esVacio()) return false
+    if (arbolAVL.esVacio()) return false;
     setValues((prev) => ({
       ...prev,
-      toSearch: arbolRN.getMinimo().valor,
-    }))
-    return true
-  }
+      toSearch: arbolAVL.getMinimo().valor,
+    }));
+    return true;
+  };
 
   const getPreOrden = () => {
-    const preorden = arbolRN.preOrden()
-    if (!preorden) return false
+    const preorden = arbolAVL.preOrden();
+    if (!preorden) return false;
     setValues((prev) => ({
       ...prev,
       postorden: null,
       inorden: null,
       preorden: preorden,
-    }))
-    return true
-  }
+    }));
+    return true;
+  };
 
   const getPostOrden = () => {
-    const postorden = arbolRN.postOrden()
-    if (!postorden) return false
+    const postorden = arbolAVL.postOrden();
+    if (!postorden) return false;
     setValues((prev) => ({
       ...prev,
       preorden: null,
       inorden: null,
       postorden: postorden,
-    }))
-    return true
-  }
+    }));
+    return true;
+  };
 
   const getInOrden = () => {
-    const inorden = arbolRN.inOrden()
-    if (!inorden) return false
+    const inorden = arbolAVL.inOrden();
+    if (!inorden) return false;
     setValues((prev) => ({
       ...prev,
       preorden: null,
       postorden: null,
       inorden: inorden,
-    }))
-    return true
-  }
+    }));
+    return true;
+  };
 
   const insertRandomNodes = (nodesNumber) => {
-    const nuevoArbol = new ArbolRojoNegro()
-    nuevoArbol.insertarNodosAleatorios(nodesNumber)
-    console.log(nuevoArbol)
-    console.log('arbol', stringify(nuevoArbol))
+    const nuevoArbol = new ArbolAVL();
+    nuevoArbol.insertarNodosAleatorios(nodesNumber);
+    // console.log(nuevoArbol);
+    // console.log("arbol", stringify(nuevoArbol));
     // window.localStorage.setItem(
     //  'arbolRN',
     // JSON.stringify(nuevoArbol.toNodoObject(), 2, null)
     //)
-    setArbolRN(nuevoArbol)
-    setRaiz(nuevoArbol.getRaiz())
+    setArbolAVL(nuevoArbol);
+    setRaiz(nuevoArbol.getRaiz());
     setValues((prev) => ({
       ...prev,
       randomNodes: nodesNumber,
-    }))
-  }
+    }));
+  };
 
   //Método para vaciar el arbol
   const vaciarArbol = () => {
-    const nuevoArbol = arbolRN.clonar()
-    nuevoArbol.vaciar()
-    setArbolRN(nuevoArbol)
-    setRaiz(nuevoArbol.getRaiz())
+    const nuevoArbol = arbolAVL.clonar();
+    nuevoArbol.vaciar();
+    setArbolAVL(nuevoArbol);
+    setRaiz(nuevoArbol.getRaiz());
     //window.localStorage.removeItem('arbol')
-  }
+  };
 
   const resetValues = () => {
     setValues({
@@ -146,14 +144,12 @@ const useArbolRojiNegro = () => {
       preorden: null,
       postorden: null,
       inorden: null,
-    })
-    //window.localStorage.removeItem('numbers')
-    //window.localStorage.removeItem('values')
-  }
+    });
+  };
 
   return {
-    arbolRN,
-    setArbolRN,
+    arbolAVL,
+    setArbolAVL,
     raiz,
     setRaiz,
     values,
@@ -169,7 +165,7 @@ const useArbolRojiNegro = () => {
     getInOrden,
     insertRandomNodes,
     vaciarArbol,
-  }
-}
+  };
+};
 
-export default useArbolRojiNegro
+export default useArbolAVL;
