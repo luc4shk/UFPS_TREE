@@ -1,7 +1,7 @@
 import { LayoutTree } from "../../components/LayoutTree";
 import TreeRender from "../../components/TreeRender";
 import useArbolAVL from "../../hooks/useArbolAVL";
-import { convertirDataBST } from "../../components/draws/utils/ConvertirData";
+import { convertirDataAVL } from "../../components/draws/utils/ConvertirData";
 import {
   addNode,
   addFirst,
@@ -72,7 +72,7 @@ export const PracticaArbolAVL = () => {
       <TreeRender
         tree={raiz ? raiz : {}}
         values={values}
-        convertirData={convertirDataBST}
+        convertirData={convertirDataAVL}
         actions={actions}
         treeIsEmpty={arbolAVL.getAltura()}
       />

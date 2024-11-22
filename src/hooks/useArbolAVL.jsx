@@ -21,7 +21,6 @@ const useArbolAVL = () => {
   const insertarNodo = (query) => {
     const nuevoArbol = arbolAVL.clonar();
     nuevoArbol.insertar(query);
-    console.log(nuevoArbol);
     setArbolAVL(nuevoArbol);
     setRaiz(nuevoArbol.getRaiz()); // Actualizar la raíz después de la inserción
     setValues((prev) => ({

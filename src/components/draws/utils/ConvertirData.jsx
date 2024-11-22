@@ -65,3 +65,37 @@ export const convertirDataRN = (node) => {
     children: children.filter((child) => child !== null), // Filtra nodos null
   }
 }
+
+// Función para convertir el árbol de datos en formato jerárquico
+export const convertirDataAVL = (node) => {
+  console.log("NODOOOO",node)
+  if (!node) return null
+
+  const children = []
+
+  if (node.izq) {
+    children.push(convertirDataAVL(node.izq))
+  } else {
+    // Si el hijo izquierdo es null, añadimos un nodo invisible
+    children.push({
+      name: 'Empty', // Nodo invisible
+      children: [],
+    })
+  }
+
+  if (node.der) {
+    children.push(convertirDataAVL(node.der))
+  } else {
+    // Si el hijo derecho es null, añadimos un nodo invisible
+    children.push({
+      name: 'Empty', // Nodo invisible
+      children: [],
+    })
+  }
+
+  return {
+    name: node.info,
+    padre: node.padre,
+    children: children.filter((child) => child !== null), // Filtra nodos null
+  }
+}

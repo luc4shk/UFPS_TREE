@@ -7,7 +7,7 @@ export class NodoAVL {
    * @param {NodoBinario} izq - Nodo hijo izquierdo.
    * @param {NodoBinario} der - Nodo hijo derecho.
    */
-  constructor(padre = null, bal = 0, info = null, izq = null, der = null) {
+  constructor(info, padre = null, bal = 0, izq = null, der = null) {
     this.info = info;
     this.izq = izq;
     this.der = der;

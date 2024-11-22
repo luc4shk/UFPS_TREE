@@ -1,51 +1,62 @@
-import { NodoAVL } from "../nodos/NodoAVL";
-import { ArbolBinarioBusqueda } from "./ArbolBinarioBusqueda";
+import { NodoAVL } from "../nodos/NodoAVL.js";
+// import { ArbolBinarioBusqueda } from "./ArbolBinarioBusqueda.js";
 
-export class ArbolAVL extends ArbolBinarioBusqueda {
+export class ArbolAVL {
   /**
    * Crea un arbol avl.
    * @constructs
    * @param {NodoAVL} raiz - Nodo Raiz para crear el arbol.
    * */
   constructor(raiz = null) {
-    super();
     this.raiz = raiz;
   }
 
   insertar(nuevo) {
-    const n = new NodoAVL(nuevo);
-    return this.insertaAVL(this.raiz, n);
+    const nuevoNodo = this.esta(nuevo)
+      ? null
+      : this.insertaAVL(this.getRaiz(), nuevo);
+
+    if (nuevoNodo !== null) this.setRaiz(nuevoNodo);
+    return nuevoNodo !== null;
   }
 
   insertaAVL(p, q) {
-    if (this.esVacio()) {
-      this.setRaiz(q);
-      return true;
+    if (p === null) {
+      return new NodoAVL(q);
     }
 
-    const comp = q.info < p.info ? -1 : q.info > p.info ? 1 : 0;
-
-    if (comp === 0) return false; // Nodo ya existe
+    const comp = p.info - q;
+    let nodo = null;
 
     if (comp < 0) {
       if (!p.izq) {
-        p.izq = q;
-        q.padre = p;
-        this.balancear(p);
-        return true;
+        nodo = new NodoAVL(q);
+        p.izq = nodo;
+        nodo.padre = p;
+        // this.balancear(p);
+        return nodo;
       }
       return this.insertaAVL(p.izq, q);
-    } else {
+    }
+    if (comp > 0) {
       if (!p.der) {
-        p.der = q;
-        q.padre = p;
-        this.balancear(p);
-        return true;
+        nodo = new NodoAVL(q);
+        p.der = nodo;
+        nodo.padre = p;
+        // this.balancear(p);
+        return nodo;
       }
       return this.insertaAVL(p.der, q);
+    } else {
+      console.error(`Error dato duplicado: ${q}`);
     }
+    return p;
   }
 
+  /**
+   * Actualiza el nodo raiz del arbol actual.
+   * @param {NodoAVL} raiz - Nuevo nodo raiz.
+   * */
   setRaiz(raiz) {
     this.raiz = raiz;
   }
@@ -168,7 +179,7 @@ export class ArbolAVL extends ArbolBinarioBusqueda {
     if (r === null) return false;
 
     //Restamos la raíz actual con el nodo a buscar.
-    const compara = r.getInfo() - x;
+    const compara = r.info - x;
 
     if (compara > 0) {
       //Valor de raiz - Valor a buscar > 0-> El valor se encuentra hacia la izquierda.
@@ -237,17 +248,25 @@ export class ArbolAVL extends ArbolBinarioBusqueda {
     return a < b ? -1 : a > b ? 1 : 0;
   }
 
-  preOrden() {
-    return super.preOrden();
+  /**
+   * Obtener la altura del arbol.
+   * @returns {Number} Altura del arbol.
+   * */
+  getAltura() {
+    return this.getAlturaNodo(this.getRaiz());
   }
 
-  inOrden() {
-    return super.inOrden();
-  }
+  // preOrden() {
+  //   return super.preOrden();
+  // }
 
-  postOrden() {
-    return super.postOrden();
-  }
+  // inOrden() {
+  //   return super.inOrden();
+  // }
+
+  // postOrden() {
+  //   return super.postOrden();
+  // }
 
   clonar() {
     const nuevoArbol = new ArbolAVL();
@@ -295,18 +314,19 @@ export class ArbolAVL extends ArbolBinarioBusqueda {
 
   // Método que determina si un valor especifico se encuentra dentor del árbol
   contiene(valor) {
-    return this.buscarNodo(this.raiz, valor) !== this.nulo;
+    return this.buscarNodo(this.getRaiz(), valor);
   }
 
   // Método encargado de realizar la busqueda de un nodo especifico
-  buscarNodo(nodo, valor) {
-    while (nodo !== this.nulo && valor !== nodo.valor) {
-      nodo = valor < nodo.valor ? nodo.izquierda : nodo.derecha;
-    }
-    return nodo;
+  buscarNodo(r, valor) {
+    if (r === null) return null;
+    if (r.getInfo() === valor) return r;
+    const aux = this.buscarNodo(r.getIzq(), valor);
+    return aux !== null ? aux : this.buscarNodo(r.getDer(), valor);
   }
 
   insertarNodosAleatorios(cantidad) {
+    console.log("CANTIDAD", cantidad);
     const valoresInsertados = new Set(); // Conjunto para almacenar los valores ya insertados
 
     for (let i = 0; i < cantidad; i++) {
