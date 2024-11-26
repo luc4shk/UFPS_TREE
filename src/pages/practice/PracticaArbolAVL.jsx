@@ -3,12 +3,12 @@ import TreeRender from "../../components/TreeRender";
 import useArbolAVL from "../../hooks/useArbolAVL";
 import { convertirDataAVL } from "../../components/draws/utils/ConvertirData";
 import {
-  addNode,
-  addFirst,
-  deleteNode,
+  addNodeAVL,
+  addFirstAVL,
+  deleteNodeAVL,
 } from "../../components/actions/ActionAVL";
-import { drawLinks } from "../../components/draws/ArbolBST/insertar/AddLinkDraws";
-import { drawNodes } from "../../components/draws/ArbolBST/mostrar/AllNodesDraws";
+import { drawLinksAVL } from "../../components/draws/ArbolAVL/insertar/AddLinkDrawsAVL";
+import { drawNodesAVL } from "../../components/draws/ArbolAVL/mostrar/AllNodesDrawsAVL";
 
 export const PracticaArbolAVL = () => {
   window.addEventListener("beforeunload", function (event) {
@@ -21,11 +21,11 @@ export const PracticaArbolAVL = () => {
     return mensaje; // Para otros navegadores modernos
   });
   const actions = {
-    addNode: addNode,
-    addFirst: addFirst,
-    deleteNode: deleteNode,
-    drawLinks: drawLinks,
-    drawNodes: drawNodes,
+    addNode: addNodeAVL,
+    addFirst: addFirstAVL,
+    deleteNode: deleteNodeAVL,
+    drawLinks: drawLinksAVL,
+    drawNodes: drawNodesAVL,
   };
 
   const {
