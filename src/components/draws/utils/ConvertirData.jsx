@@ -68,7 +68,6 @@ export const convertirDataRN = (node) => {
 
 // Función para convertir el árbol de datos en formato jerárquico
 export const convertirDataAVL = (node) => {
-  console.log("NODOOOO",node)
   if (!node) return null
 
   const children = []
