@@ -20,7 +20,9 @@ const useArbolAVL = () => {
 
   const insertarNodo = (query) => {
     const nuevoArbol = arbolAVL.clonar();
+    console.log("ARBOL CLONADO", nuevoArbol)
     nuevoArbol.insertar(query);
+    // window.localStorage.setItem('arbol', JSON.stringify(nuevoArbol, 2, null))
     setArbolAVL(nuevoArbol);
     setRaiz(nuevoArbol.getRaiz()); // Actualizar la raíz después de la inserción
     setValues((prev) => ({

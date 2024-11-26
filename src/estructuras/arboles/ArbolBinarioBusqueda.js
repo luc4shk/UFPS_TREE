@@ -47,7 +47,10 @@ export class ArbolBinarioBusqueda {
       : this.insertarNodo(this.getRaiz(), dato)
 
     //Si existe el nuevo nodo actualizamos la raíz
-    if (nuevoNodo !== null) this.setRaiz(nuevoNodo)
+    if (nuevoNodo !== null){
+      this.setRaiz(nuevoNodo)
+    }
+
 
     //Retornamos si se inserto o no el resultado
     return nuevoNodo !== null

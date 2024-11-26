@@ -14,44 +14,44 @@ export class ArbolAVL {
   insertar(nuevo) {
     const nuevoNodo = this.esta(nuevo)
       ? null
-      : this.insertaAVL(this.getRaiz(), nuevo);
+      : this.insertarNodo(this.getRaiz(), nuevo);
 
     if (nuevoNodo !== null) this.setRaiz(nuevoNodo);
     return nuevoNodo !== null;
   }
 
-  insertaAVL(p, q) {
-    if (p === null) {
-      return new NodoAVL(q);
+    /**
+   * Insertar un nodo en el arbol.
+   * @private
+   * @param {NodoAVL} r - Nodo raíz.
+   * @param {Number} dato - Valor a ingresar.
+   * */
+    insertarNodo(r, dato) {
+      if (r === null) {
+        return new NodoAVL(dato)
+      }
+      //Obtenemos el valor de la raíz actual
+      const valorActual = r.getInfo()
+  
+      //Comparamos el valor de la raíz con el dato que vamos a ingresar.
+      const compara = Number(valorActual) - Number(dato)
+  
+      //Si compara es positivo, quiere decir que el dato es menor a la raiz, por lo que va a la izquierda.
+      if (compara > 0) {
+        r.setIzq(this.insertarNodo(r.getIzq(), dato))
+        
+        //Si compara es negativo, quiere decir que el dato es mayor a la raiz, por lo que va a la derecha.
+      } else if (compara < 0) {
+        r.setDer(this.insertarNodo(r.getDer(), dato))
+  
+        //Si compara es igual a 0, quiere decir que es el mismo valor que se va a insertar.
+      } else {
+        console.error(`Error dato duplicado: ${dato}`)
+      }
+
+      return r
     }
 
-    const comp = p.info - q;
-    let nodo = null;
-
-    if (comp < 0) {
-      if (!p.izq) {
-        nodo = new NodoAVL(q);
-        p.izq = nodo;
-        nodo.padre = p;
-        // this.balancear(p);
-        return nodo;
-      }
-      return this.insertaAVL(p.izq, q);
-    }
-    if (comp > 0) {
-      if (!p.der) {
-        nodo = new NodoAVL(q);
-        p.der = nodo;
-        nodo.padre = p;
-        // this.balancear(p);
-        return nodo;
-      }
-      return this.insertaAVL(p.der, q);
-    } else {
-      console.error(`Error dato duplicado: ${q}`);
-    }
-    return p;
-  }
 
   /**
    * Actualiza el nodo raiz del arbol actual.
@@ -59,6 +59,14 @@ export class ArbolAVL {
    * */
   setRaiz(raiz) {
     this.raiz = raiz;
+  }
+
+    /**
+   * Obtiene el nodo raiz del arbol actual.
+   * @return {NodoAVL} Nodo Raiz.
+   * */
+  getRaiz() {
+    return this.raiz;
   }
 
   balancear(r) {
@@ -288,9 +296,6 @@ export class ArbolAVL {
     );
   }
 
-  getRaiz() {
-    return this.raiz;
-  }
 
   // Método encargado de buscar el nodo con valor mínimo del árbol
   getMinimo(nodo = this.raiz) {

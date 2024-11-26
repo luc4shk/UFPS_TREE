@@ -57,7 +57,7 @@ const useArbolBST = () => {
     setRaiz(nuevoArbol.getRaiz()) // Actualizar la raíz después de la inserción
     setValues((prev) => ({
       ...prev,
-      toAdd: query,
+      toAdd: Number(query),
     }))
   }
 

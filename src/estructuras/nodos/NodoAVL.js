@@ -1,18 +1,16 @@
 export class NodoAVL {
   /**
    * Constructor para la clase NodoAVL.
-   * @param {NodoAVL} padre - Nodo padre del nodo actual.
-   * @param {Number} bal - Factor de balance del nodo.
    * @param {Number} info - Valor del nodo.
    * @param {NodoBinario} izq - Nodo hijo izquierdo.
    * @param {NodoBinario} der - Nodo hijo derecho.
    */
-  constructor(info, padre = null, bal = 0, izq = null, der = null) {
+  constructor(info, izq = null, der = null) {
     this.info = info;
     this.izq = izq;
     this.der = der;
-    this.padre = padre;
-    this.bal = bal;
+    // this.padre = padre;
+    // this.bal = bal;
   }
 
   getInfo() {
@@ -39,13 +37,13 @@ export class NodoAVL {
     this.der = der;
   }
 
-  getPadre() {
-    return this.padre;
-  }
+  // getPadre() {
+  //   return this.padre;
+  // }
 
-  setPadre(padre) {
-    this.padre = padre;
-  }
+  // setPadre(padre) {
+  //   this.padre = padre;
+  // }
 
   getBalance() {
     return Number(this.balance);
