@@ -11,47 +11,95 @@ export class ArbolAVL {
     this.raiz = raiz;
   }
 
-  insertar(nuevo) {
-    const nuevoNodo = this.esta(nuevo)
-      ? null
-      : this.insertarNodo(this.getRaiz(), nuevo);
-
-    if (nuevoNodo !== null) this.setRaiz(nuevoNodo);
-    return nuevoNodo !== null;
+  insertar(info) {
+    this.raiz = this._insertarNodo(this.raiz, info);
   }
 
-    /**
-   * Insertar un nodo en el arbol.
-   * @private
-   * @param {NodoAVL} r - Nodo raíz.
-   * @param {Number} dato - Valor a ingresar.
-   * */
-    insertarNodo(r, dato) {
-      if (r === null) {
-        return new NodoAVL(dato)
-      }
-      //Obtenemos el valor de la raíz actual
-      const valorActual = r.getInfo()
-  
-      //Comparamos el valor de la raíz con el dato que vamos a ingresar.
-      const compara = Number(valorActual) - Number(dato)
-  
-      //Si compara es positivo, quiere decir que el dato es menor a la raiz, por lo que va a la izquierda.
-      if (compara > 0) {
-        r.setIzq(this.insertarNodo(r.getIzq(), dato))
-        
-        //Si compara es negativo, quiere decir que el dato es mayor a la raiz, por lo que va a la derecha.
-      } else if (compara < 0) {
-        r.setDer(this.insertarNodo(r.getDer(), dato))
-  
-        //Si compara es igual a 0, quiere decir que es el mismo valor que se va a insertar.
-      } else {
-        console.error(`Error dato duplicado: ${dato}`)
-      }
-
-      return r
+  _insertarNodo(nodo, info) {
+    // Caso base: si el nodo es nulo, crear un nuevo NodoAVL
+    if (nodo === null) {
+      return new NodoAVL(info);
     }
 
+    // Insertar en el subárbol izquierdo o derecho según el valor
+    if (info < nodo.info) {
+      nodo.izq = this._insertarNodo(nodo.izq, info);
+    } else if (info > nodo.info) {
+      nodo.der = this._insertarNodo(nodo.der, info);
+    } else {
+      // Los valores duplicados no se permiten en un árbol AVL
+      return nodo;
+    }
+
+    // Actualizar el balance del nodo actual
+    nodo.setBalance(this._getAltura(nodo.izq) - this._getAltura(nodo.der));
+
+    // Realizar las rotaciones necesarias para balancear el árbol
+    return this._balancear(nodo);
+  }
+
+  _balancear(nodo) {
+    // Rotación simple a la derecha
+    if (nodo.getBalance() > 1 && nodo.izq.getBalance() >= 0) {
+      return this._rotarDerecha(nodo);
+    }
+
+    // Rotación simple a la izquierda
+    if (nodo.getBalance() < -1 && nodo.der.getBalance() <= 0) {
+      return this._rotarIzquierda(nodo);
+    }
+
+    // Rotación doble izquierda-derecha
+    if (nodo.getBalance() > 1 && nodo.izq.getBalance() < 0) {
+      nodo.izq = this._rotarIzquierda(nodo.izq);
+      return this._rotarDerecha(nodo);
+    }
+
+    // Rotación doble derecha-izquierda
+    if (nodo.getBalance() < -1 && nodo.der.getBalance() > 0) {
+      nodo.der = this._rotarDerecha(nodo.der);
+      return this._rotarIzquierda(nodo);
+    }
+
+    return nodo; // No necesita balanceo
+  }
+
+  _rotarDerecha(y) {
+    const x = y.izq;
+    const T2 = x.der;
+
+    // Rotación
+    x.der = y;
+    y.izq = T2;
+
+    // Actualizar balances
+    y.setBalance(this._getAltura(y.izq) - this._getAltura(y.der));
+    x.setBalance(this._getAltura(x.izq) - this._getAltura(x.der));
+
+    return x; // Nueva raíz
+  }
+
+  _rotarIzquierda(x) {
+    const y = x.der;
+    const T2 = y.izq;
+
+    // Rotación
+    y.izq = x;
+    x.der = T2;
+
+    // Actualizar balances
+    x.setBalance(this._getAltura(x.izq) - this._getAltura(x.der));
+    y.setBalance(this._getAltura(y.izq) - this._getAltura(y.der));
+
+    return y; // Nueva raíz
+  }
+
+  _getAltura(nodo) {
+    if (nodo === null) {
+      return 0;
+    }
+    return Math.max(this._getAltura(nodo.izq), this._getAltura(nodo.der)) + 1;
+  }
 
   /**
    * Actualiza el nodo raiz del arbol actual.
@@ -61,7 +109,7 @@ export class ArbolAVL {
     this.raiz = raiz;
   }
 
-    /**
+  /**
    * Obtiene el nodo raiz del arbol actual.
    * @return {NodoAVL} Nodo Raiz.
    * */
@@ -92,6 +140,7 @@ export class ArbolAVL {
     } else {
       this.setRaiz(r);
     }
+    console.log("HOLA SOY RAIZ", r);
   }
 
   setBalance(r) {
@@ -295,7 +344,6 @@ export class ArbolAVL {
       this.clonarAVL(r.getDer())
     );
   }
-
 
   // Método encargado de buscar el nodo con valor mínimo del árbol
   getMinimo(nodo = this.raiz) {
