@@ -52,8 +52,8 @@ export const PracticaArbolAVL = () => {
     <LayoutTree
       values={values}
       title={"Árbol AVL"}
-      containerColor={"#74f50b"}
-      linkColor={"#74f50b"}
+      containerColor={"rgb(255, 85, 1)"}
+      linkColor={"rgb(255, 85, 1)"}
       treeFunctions={{
         addNode: insertarNodo,
         deleteNode: eliminarNodo,

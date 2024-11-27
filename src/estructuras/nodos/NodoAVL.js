@@ -3,8 +3,8 @@ export class NodoAVL {
   /**
    * Constructor para la clase NodoAVL.
    * @param {Number} info - Valor del nodo.
-   * @param {NodoBinario} izq - Nodo hijo izquierdo.
-   * @param {NodoBinario} der - Nodo hijo derecho.
+   * @param {NodoAVL} izq - Nodo hijo izquierdo.
+   * @param {NodoAVL} der - Nodo hijo derecho.
    */
   constructor(info, izq = null, der = null) {
     this.info = info;
