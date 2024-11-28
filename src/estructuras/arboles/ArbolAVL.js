@@ -239,18 +239,6 @@ export class ArbolAVL {
     return this.getAlturaNodo(this.getRaiz());
   }
 
-  // preOrden() {
-  //   return super.preOrden();
-  // }
-
-  // inOrden() {
-  //   return super.inOrden();
-  // }
-
-  // postOrden() {
-  //   return super.postOrden();
-  // }
-
   clonar() {
     const nuevoArbol = new ArbolAVL();
     nuevoArbol.setRaiz(this.clonarAVL(this.getRaiz()));
@@ -357,5 +345,119 @@ export class ArbolAVL {
   // Vacía el árbol asignando la raíz a un nodo nulo
   vaciar() {
     this.raiz = this.nulo;
+  }
+
+    /**
+   * Devuelve el recorrido Pre-orden.
+   * @returns {String} Cadena con el recorrido
+   * */
+    preOrden() {
+      const array = []
+      const preOrdenArray = this.preOrdenNodo(this.getRaiz(), array)
+      return preOrdenArray?.join(' - ')
+    }
+  
+    /**
+     * Devuelve el recorrido Pre-orden
+     * @private
+     * @return {Array} Arreglo con el recorrido.
+     * */
+    preOrdenNodo(raiz, array) {
+      //Verificamos que la raíz no sea nul
+      if (raiz === null) return
+  
+      //Agregamos el valor de la raiz actual al arreglo.
+      array.push(raiz.getInfo())
+  
+      //Verificamos que exista un nodo izquierdo
+      if (raiz.getIzq()) {
+        //Llamamos recursivamente hasta encontrar el ultimo nodo izquierdo
+        this.preOrdenNodo(raiz.getIzq(), array)
+      }
+  
+      //Verificamos que exista un nodo derecho
+      if (raiz.getDer()) {
+        //Llamamos recursivamente hasta encontrar el ultimo nodo derecho
+        this.preOrdenNodo(raiz.getDer(), array)
+      }
+  
+      //Retornamos el arreglo con el orden del recorrido
+      return array
+    }
+  
+  /**
+   * Devuelve el recorrido In-Orden.
+   * @returns {String} Cadena con el recorrido.
+   * */
+  inOrden() {
+    const array = []
+    const inOrdenArray = this.inOrdenNodo(this.getRaiz(), array)
+    return inOrdenArray?.join(' - ')
+  }
+
+  /**
+   * Devuelve el recorrido In-Orden.
+   * @private
+   * @returns {Array} Arreglo con el recorrido.
+   * */
+  inOrdenNodo(raiz, array) {
+    //Verificamos que la raíz no sea nul
+    if (raiz === null) return
+
+    //Verificamos que exista un nodo izquierdo
+    if (raiz.getIzq()) {
+      //Llamamos recursivamente hasta encontrar el ultimo nodo izquierdo.
+      this.inOrdenNodo(raiz.getIzq(), array)
+    }
+
+    //Agregamos el valor de la raiz actual al arreglo.
+    array.push(raiz.getInfo())
+
+    //Verificamos que exista un nodo derecho
+    if (raiz.getDer()) {
+      //Llamamos recursivamente hasta encontrar el ultimo nodo derecho
+      this.inOrdenNodo(raiz.getDer(), array)
+    }
+
+    //Retornamos el arreglo con el orden del recorrido.
+    return array
+  }
+
+  /**
+   * Devuelve el recorrido Post-Orden.
+   * @returns {String} Cadena con el recorrido.
+   * */
+  postOrden() {
+    const array = []
+    const postOrdenArray = this.postOrdenNodo(this.getRaiz(), array)
+    return postOrdenArray?.join(' - ')
+  }
+
+  /**
+   * Devuelve el recorrido In-Orden.
+   * @private
+   * @returns {Array} Arreglo con el recorrido.
+   * */
+  postOrdenNodo(raiz, array) {
+    //Verificamos que la raíz no sea nula
+    if (raiz === null) return
+
+    //Verificamos que exista un nodo izquierdo
+    if (raiz.getIzq()) {
+      //Llamamos recursivamente hasta encontrar el ultimo nodo izquierdo.
+      this.postOrdenNodo(raiz.getIzq(), array)
+    }
+
+    //Verificamos que exista un nodo derecho
+    if (raiz.getDer()) {
+      //Llamamos recursivamente hasta encontrar el ultimo nodo derecho
+      this.postOrdenNodo(raiz.getDer(), array)
+    }
+
+    //Agregamos el valor de la raiz actual al arreglo.
+    array.push(raiz.getInfo())
+
+    //Retornamos el arreglo con el orden del recorrido.
+    return array
   }
 }
