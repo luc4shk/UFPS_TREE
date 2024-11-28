@@ -117,32 +117,6 @@ export class ArbolAVL {
     return this.raiz;
   }
 
-  balancear(r) {
-    this.setBalance(r);
-    const balance = r.bal;
-
-    if (balance === -2) {
-      if (this.getAlturaNodo(r.izq.izq) >= this.getAlturaNodo(r.izq.der)) {
-        this.rDerecha(r);
-      } else {
-        this.drIzqDer(r);
-      }
-    } else if (balance === 2) {
-      if (this.getAlturaNodo(r.der.der) >= this.getAlturaNodo(r.der.izq)) {
-        this.rIzquierda(r);
-      } else {
-        this.drDerIzq(r);
-      }
-    }
-
-    if (r.padre) {
-      this.balancear(r.padre);
-    } else {
-      this.setRaiz(r);
-    }
-    console.log("HOLA SOY RAIZ", r);
-  }
-
   setBalance(r) {
     r.bal = this.getAlturaNodo(r.der) - this.getAlturaNodo(r.izq);
   }
@@ -150,67 +124,6 @@ export class ArbolAVL {
   getAlturaNodo(r) {
     if (!r) return -1;
     return 1 + Math.max(this.getAlturaNodo(r.izq), this.getAlturaNodo(r.der));
-  }
-
-  rIzquierda(r) {
-    const v = r.der;
-    v.padre = r.padre;
-
-    r.der = v.izq;
-    if (r.der) r.der.padre = r;
-
-    v.izq = r;
-    r.padre = v;
-
-    if (v.padre) {
-      if (v.padre.der === r) {
-        v.padre.der = v;
-      } else {
-        v.padre.izq = v;
-      }
-    }
-
-    this.setBalance(r);
-    this.setBalance(v);
-    return v;
-  }
-
-  rDerecha(r) {
-    const v = r.izq;
-    v.padre = r.padre;
-
-    r.izq = v.der;
-    if (r.izq) r.izq.padre = r;
-
-    v.der = r;
-    r.padre = v;
-
-    if (v.padre) {
-      if (v.padre.der === r) {
-        v.padre.der = v;
-      } else {
-        v.padre.izq = v;
-      }
-    }
-
-    this.setBalance(r);
-    this.setBalance(v);
-    return v;
-  }
-
-  drIzqDer(r) {
-    r.izq = this.rIzquierda(r.izq);
-    return this.rDerecha(r);
-  }
-
-  drDerIzq(r) {
-    r.der = this.rDerecha(r.der);
-    return this.rIzquierda(r);
-  }
-
-  eliminar(q) {
-    if (this.esVacio() || !this.esta(q)) return false;
-    return this.eliminarAVL(this.raiz, q);
   }
 
   esVacio() {
@@ -250,40 +163,53 @@ export class ArbolAVL {
     }
   }
 
-  eliminarAVL(p, q) {
-    let comp = this.compare(p.info, q);
-    if (comp === 0) return this.eliminaAVL(p);
-    if (comp > 0) return this.eliminarAVL(p.izq, q);
-    return this.eliminarAVL(p.der, q);
+  // Método público para eliminar un nodo
+  eliminar(valor) {
+    this.raiz = this._eliminarNodo(this.raiz, valor);
   }
 
-  eliminaAVL(nodo) {
-    let s;
-    if (!nodo.izq || !nodo.der) {
-      if (!nodo.padre) {
-        if (nodo.izq) this.setRaiz(nodo.izq);
-        else if (nodo.der) this.setRaiz(nodo.der);
-        else this.setRaiz(null);
-        return true;
-      }
-      s = nodo;
+  // Método recursivo para eliminar un nodo específico y balancear hacia arriba
+  _eliminarNodo(nodo, valor) {
+    if (!nodo) return null; // Nodo no encontrado
+
+    // Buscar el nodo a eliminar
+    if (valor < nodo.info) {
+      nodo.izq = this._eliminarNodo(nodo.izq, valor);
+    } else if (valor > nodo.info) {
+      nodo.der = this._eliminarNodo(nodo.der, valor);
     } else {
-      s = this.getSucesor(nodo);
-      nodo.info = s.info;
+      // Caso 1: Nodo sin hijos
+      if (!nodo.izq && !nodo.der) {
+        return null;
+      }
+
+      // Caso 2: Nodo con un solo hijo
+      if (!nodo.izq) {
+        return nodo.der;
+      }
+      if (!nodo.der) {
+        return nodo.izq;
+      }
+
+      // Caso 3: Nodo con dos hijos
+      const sucesor = this._encontrarMinimo(nodo.der);
+      nodo.info = sucesor.info; // Reemplazar el valor del nodo con el del sucesor
+      nodo.der = this._eliminarNodo(nodo.der, sucesor.info); // Eliminar el sucesor
     }
 
-    let p = s.izq || s.der;
-    if (p) p.padre = s.padre;
+    // Actualizar balance del nodo actual
+    nodo.setBalance(this._getAltura(nodo.izq) - this._getAltura(nodo.der));
 
-    if (!s.padre) this.setRaiz(p);
-    else {
-      if (s === s.padre.izq) s.padre.izq = p;
-      else s.padre.der = p;
+    // Balancear el nodo actual si es necesario y continuar hacia arriba
+    return this._balancear(nodo);
+  }
 
-      this.balancear(s.padre);
+  // Método para encontrar el nodo con el valor mínimo en un subárbol
+  _encontrarMinimo(nodo) {
+    while (nodo.izq) {
+      nodo = nodo.izq;
     }
-
-    return true;
+    return nodo;
   }
 
   getSucesor(nodo) {
@@ -345,25 +271,58 @@ export class ArbolAVL {
     );
   }
 
-  // Método encargado de buscar el nodo con valor mínimo del árbol
-  getMinimo(nodo = this.raiz) {
-    if (this.esVacio()) return null;
-
-    while (nodo.izquierda.valor !== null) {
-      nodo = nodo.izquierda;
-    }
-    return nodo; // Nodo con el valor mínimo
+  /**
+   * Retoran el valor del nodo menor
+   * @returns {Number} Valor del nodo menor
+   * */
+  getMinimo() {
+    const node = this.buscarNodoMenor(this.raiz)
+    console.log("menor", node);
+    return node?.info
   }
 
-  // Método encargado de buscar el nodo con valor máximo del árbol
-  getMaximo(nodo = this.raiz) {
-    if (this.esVacio()) return null;
-
-    while (nodo.derecha.valor !== null) {
-      nodo = nodo.derecha;
-    }
-    return nodo; // Nodo con el valor máximo
+  /**
+   * Retorna el nodo menor a partir de la raiz
+   * @private
+   * @param {NodoAVL} r - Raíz o punto de partida
+   * */
+  buscarNodoMenor(r) {
+    if (r === null) return
+    if (r.izq === null) return r
+    return this.buscarNodoMenor(r.izq)
   }
+
+  /**
+   * Retoran el valor del nodo mayor
+   * @returns {Number} Valor del nodo mayor
+   * */
+  getMaximo() {
+    const node = this.buscarNodoMayor(this.raiz)
+    console.log("mayor", node);
+    return node?.info
+  }
+
+  /**
+   * Retorna el nodo mayor a partir de la raiz
+   * @private
+   * @param {NodoAVL} r - Raíz o punto de partida
+   * */
+  buscarNodoMayor(r) {
+    if (r === null) return
+    if (r.der === null) return r
+    return this.buscarNodoMayor(r.der)
+  }
+
+  // // Método encargado de buscar el nodo con valor máximo del árbol
+  // getMaximo(nodo = this.raiz) {
+  //   if (this.esVacio()) return null;
+
+  //   while (nodo.der) {
+  //     nodo = nodo.der;
+  //   }
+  //   console.log("MÁXIMO", nodo)
+  //   return nodo;// Nodo con el valor máximo
+  // }
 
   // Método que determina si un valor especifico se encuentra dentor del árbol
   contiene(valor) {
