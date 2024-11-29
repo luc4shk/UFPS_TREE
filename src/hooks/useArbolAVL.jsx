@@ -57,7 +57,7 @@ const useArbolAVL = () => {
     if (arbolAVL.esVacio()) return false;
     setValues((prev) => ({
       ...prev,
-      toSearch: arbolAVL.getMaximo().valor, //valor seria info?
+      toSearch: arbolAVL.getMaximo(),
     }));
     return true;
   };
@@ -66,7 +66,7 @@ const useArbolAVL = () => {
     if (arbolAVL.esVacio()) return false;
     setValues((prev) => ({
       ...prev,
-      toSearch: arbolAVL.getMinimo().valor,
+      toSearch: arbolAVL.getMinimo(),
     }));
     return true;
   };
