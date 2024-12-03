@@ -92,3 +92,33 @@ export const mergeNodes = (gNode, nodeEnter, positions) => {
 
   return nodeUpdate
 }
+
+// Método para dibujar los rectángulos de cada nodo
+export const appendRectangles = (nodeEnter, filterFunc, withNulls = false) => {
+  let rect = nodeEnter.append('rect').attr('width', 0).attr('height', 0)
+
+  // Validamos si hay una función para filtrar
+  if (filterFunc) {
+    rect = rect.filter(filterFunc)
+  }
+
+  // Animar solo el nodo que se añade
+  rect
+    .attr('width', 100) // Ancho del rectángulo
+    .attr('height', 30) // Alto del rectángulo
+    .attr('x', -50) // Ajusta la posición horizontal para centrar
+    .attr('y', -15) // Ajusta la posición vertical para centrar
+    .attr('stroke', 'black')
+    .style('visibility', function (d) {
+      if (withNulls) {
+        return d.data.name === undefined ? 'hidden' : 'visible'
+      }
+      return d.data.name === 'Empty' ||
+        d.data.name === undefined ||
+        d.data.name === ''
+        ? 'hidden'
+        : 'visible'
+    })
+
+  return rect
+}

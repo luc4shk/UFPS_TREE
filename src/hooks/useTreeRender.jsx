@@ -2,6 +2,7 @@ import * as d3 from 'd3'
 import { useState, useRef, useEffect } from 'react'
 import { drawRecorrido } from '../components/draws/ArbolBST/recorrido/Recorrido'
 import { pathNewNode } from '../components/draws/ArbolBST/path/PathNewNode'
+import { validarElemento } from '../components/draws/utils/validarElemento'
 
 const useTreeRender = ({
   tree,
@@ -26,6 +27,8 @@ const useTreeRender = ({
       return dataTree
     })
   }, [tree])
+
+  console.log('raiz', tree)
 
   //Reenderizamos otra vez el arbol cada vez que cambie la estructura o los valores
   useEffect(() => {
@@ -73,7 +76,7 @@ const useTreeRender = ({
       if (
         values.toAdd &&
         treeIsEmpty >= 1 &&
-        root.find((d) => d.data.name == values.toAdd)
+        root.find((d) => validarElemento(d.data.name, values.toAdd))
       ) {
         await actions.addNode(root, svg, firstLoad, positions, values, setSteps)
         return
@@ -84,7 +87,7 @@ const useTreeRender = ({
 
       if (
         values.toDelete &&
-        prevRoot.find((d) => d.data.name == values.toDelete)
+        prevRoot.find((d) => validarElemento(d.data.name, values.toDelete))
       ) {
         actions.deleteNode(
           svg,
@@ -102,16 +105,24 @@ const useTreeRender = ({
       }
 
       if (values.inorden || values.preorden || values.postorden) {
-        drawRecorrido(svg, values)
+        if (values?.isB) {
+          drawRecorrido(svg, values, 'rect')
+        } else {
+          drawRecorrido(svg, values)
+        }
       }
 
       if (values.toSearch) {
         const nodoBuscar = root
           .descendants()
-          .find((d) => d.data.name == values.toSearch)
+          .find((d) => validarElemento(d.data.name, values.toSearch))
 
         const ruta = root.path(nodoBuscar)
-        pathNewNode(svg, ruta, 'buscar', values, setSteps)
+        if (values?.isB) {
+          pathNewNode(svg, ruta, 'buscar', values, setSteps, 'rect')
+        } else {
+          pathNewNode(svg, ruta, 'buscar', values, setSteps)
+        }
       }
 
       //Dibujamos normalmente el arbol si no hay ninguna operación

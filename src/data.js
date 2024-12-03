@@ -13,7 +13,7 @@ const data = [
     toPracticar: '/practicar-BST',
   },
   {
-    title: 'Árbol B y B+',
+    title: 'Árbol B',
     img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi6uxV6yeyM6vLUspnMmz78vte7XykZ18ZIC99gbdU3Fe2cN9f0vkrDg98eAw6jMstRSR9IUS3wTykqnXmT2Z69NoThtbn2Jl-IIi4NOR0KFeJzZUuXw_-9rEqwg8BOin4ePTkfHPuPYE0/s1600/B13.jpg.jpg',
     bgCard: '#50ccf4',
     complexity: 4,

@@ -65,3 +65,33 @@ export const convertirDataRN = (node) => {
     children: children.filter((child) => child !== null), // Filtra nodos null
   }
 }
+
+// Función para convertir el árbol B a un formato jerárquico para D3.js
+export const convertirDataB = (nodo) => {
+  if (!nodo) return null
+
+  const children = []
+
+  // Si el nodo no es hoja, se recorren sus hijos
+  if (!nodo.esHoja) {
+    for (let i = 0; i < nodo.hijos.length; i++) {
+      const hijo = convertirDataB(nodo.hijos[i])
+
+      // Si el hijo es null (es decir, es un nodo vacío), añadimos un nodo vacío
+      /*      if (!hijo) {
+        children.push({
+          name: 'Empty', // Nodo invisible
+          children: [], // No tiene hijos
+        })
+      } else {*/
+      children.push(hijo)
+      //}
+    }
+  }
+
+  // Devolvemos el nodo con sus claves y los hijos
+  return {
+    name: nodo.llaves.join(' | '), // Las claves del nodo las mostramos como una cadena separada por comas
+    children: children.length > 0 ? children : undefined, // Si no tiene hijos, no agregamos el campo "children"
+  }
+}
