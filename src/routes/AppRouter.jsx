@@ -8,6 +8,8 @@ import { PracticaArbolB } from '../pages/practice/PracticaArbolB'
 import { ConceptosBST } from '../pages/concepts/ConceptosBST'
 import PruebaRN from './PruebaRN.jsx'
 import { ConceptosRedBlackTree } from '../pages/concepts/ConceptosRedBlackTree.jsx'
+import { ConceptosAVL } from '../pages/concepts/ConceptosAVL'
+import { ConceptosB } from '../pages/concepts/ConceptosB.jsx';
 
 const AppRouter = () => {
   return (
@@ -27,6 +29,9 @@ const AppRouter = () => {
         {/* Rutas para conceptos */}
         <Route path="/conceptos-BST" element={<ConceptosBST />} />
         <Route path="/conceptos-RBT" element={<ConceptosRedBlackTree />} />
+        <Route path="/conceptos-AVL" element={<ConceptosAVL />} />
+        <Route path="/conceptos-B" element={<ConceptosB />} />
+
       </Routes>
     </Router>
   )

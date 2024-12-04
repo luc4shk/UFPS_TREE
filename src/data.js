@@ -18,7 +18,7 @@ const data = [
     bgCard: '#50ccf4',
     complexity: 4,
     bgButton: '#90def6',
-    toConceptos: '',
+    toConceptos: '/conceptos-B',
     toPracticar: '/practicar-B',
   },
   {
@@ -27,7 +27,7 @@ const data = [
     complexity: 2,
     bgCard: '#ff5501',
     bgButton: '#ff9460',
-    toConceptos: '',
+    toConceptos: '/conceptos-AVL',
     toPracticar: '/practicar-AVL',
   },
   {
