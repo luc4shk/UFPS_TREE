@@ -1,12 +1,4 @@
-import { validarElemento } from '../../utils/validarElemento'
-export const pathNewNode = (
-  svg,
-  nodes,
-  action,
-  values,
-  setSteps,
-  atSelect = 'circle'
-) => {
+export const pathNewNodeAVL = (svg, nodes, action, values, setSteps) => {
   return new Promise((resolve) => {
     setSteps([])
     const interval = 2000 // 2 segundos
@@ -29,13 +21,13 @@ export const pathNewNode = (
       svg
         .selectAll('g.node')
         .filter((d) => d === currentNode) // Filtramos el nodo actual
-        .select(atSelect)
+        .select('circle')
         .transition()
         .duration(400)
         .style('fill', (d) => {
           if (values.toAdd == d.data.name) return 'dodgerblue'
           if (values.toDelete == d.data.name) return 'tomato'
-          if (validarElemento(d.data.name, values.toSearch)) return 'violet'
+          if (values.toSearch == d.data.name) return 'violet'
           return '#999'
         })
         .style('stroke-width', (d) => {
@@ -136,10 +128,10 @@ const doDeleteSteps = (value, d, setSteps) => {
 }
 
 //Pasoso para buscar un nodo
-/*const doSearchSteps = (value, d, setSteps) => {
+const doSearchSteps = (value, d, setSteps) => {
   // Primero, verifica si el nodo actual coincide con el valor a eliminar
   console.log(d)
-  if (validarElemento(d.data.name, value)) {
+  if (d.data.name === value) {
     setSteps((prev) => [
       ...prev,
       <>
@@ -177,62 +169,4 @@ const doDeleteSteps = (value, d, setSteps) => {
       </>,
     ])
   }
-}*/
-
-const doSearchSteps = (value, d, setSteps) => {
-  // Primero, verifica si el nodo actual coincide con el valor a buscar
-
-  // Validamos si el valor a buscar está en la cadena de llaves del nodo
-  if (validarElemento(d.data.name, value)) {
-    setSteps((prev) => [
-      ...prev,
-      <>
-        {`${value} == ${d.data.name} \u279E \u2705 \n \t`}
-        <span style={{ color: 'green', fontWeight: 'bold' }}>
-          Nodo encontrado
-        </span>
-      </>,
-    ])
-    return // Salir si se encontró el nodo
-  } else {
-    // Si no coincide, muestra que son diferentes
-    setSteps((prev) => [...prev, <>{`${value} == ${d.data.name} \u274C \t`}</>])
-  }
-
-  // Convertimos las llaves del nodo en un array de números para evaluar correctamente
-  const nodeKeys = String(d.data.name).includes('|')
-    ? d.data.name.split('|').map((val) => Number(val.trim())) // Si hay '|', lo dividimos y convertimos en números
-    : [Number(String(d.data.name).trim())] // Si no, solo lo convertimos en un solo valor
-
-  // Evaluar si el valor debe ir a la izquierda o a la derecha
-  if (value > Math.max(...nodeKeys)) {
-    setSteps((prev) => [
-      ...prev,
-      <>
-        {`${value} > ${nodeKeys}\u279E \u2705 \n \t`}
-        <span style={{ color: 'red', fontWeight: 'bold' }}>Ir Derecha</span>
-      </>,
-    ])
-    // Avanzar hacia la derecha
-  } else if (value < Math.min(...nodeKeys)) {
-    setSteps((prev) => [
-      ...prev,
-      <>
-        {`${value} < ${nodeKeys} \u279E \u2705 \n \t`}
-        <span style={{ color: 'blue', fontWeight: 'bold' }}>Ir Izquierda</span>
-      </>,
-    ])
-  } else {
-    setSteps((prev) => [
-      ...prev,
-      <>
-        {`${value} está entre ${Math.min(...nodeKeys)} y ${Math.max(...nodeKeys)} \u279E \u274C \n \t`}
-        <span style={{ color: 'orange', fontWeight: 'bold' }}>
-          Zona central
-        </span>
-      </>,
-    ])
-  }
-
-  // Continuar con el ciclo si es necesario
 }

@@ -20,7 +20,7 @@ export class ArbolB {
   }
 
   esVacio() {
-    return this.raiz === null
+    return this.raiz.llaves.length === 0 && this.raiz.hijos.length === 0
   }
 
   vaciar() {
@@ -127,44 +127,143 @@ export class ArbolB {
   }
 
   eliminarRecursivo(nodo, llave) {
-    if (!nodo) return // Asegura que el nodo existe
-
     let i = 0
+    console.log('nodo', nodo)
+
+    // Buscar la posición de la clave a eliminar
     while (i < nodo.llaves.length && llave > nodo.llaves[i]) {
       i++
     }
 
-    // Si encontramos la clave en el nodo
     if (i < nodo.llaves.length && llave === nodo.llaves[i]) {
+      // La clave está en este nodo
       if (nodo.esHoja) {
-        // Caso 1: El nodo es una hoja, eliminamos la clave directamente
+        console.log('es hoja')
+        // Caso 1: El nodo es hoja, elimina directamente
         nodo.llaves.splice(i, 1)
       } else {
         // Caso 2: El nodo no es hoja
-        const claveIzquierda = nodo.hijos[i]
-        const claveDerecha = nodo.hijos[i + 1]
+        const hijoIzquierdo = nodo.hijos[i]
+        const hijoDerecho = nodo.hijos[i + 1]
 
-        if (claveIzquierda && claveIzquierda.llaves.length >= this.t) {
-          // Caso 2a: Si el subárbol izquierdo tiene al menos `t` claves
-          const clavePredecesora = this.obtenerMaximo(claveIzquierda)
-          nodo.llaves[i] = clavePredecesora
-          this.eliminarRecursivo(claveIzquierda, clavePredecesora)
-        } else if (claveDerecha && claveDerecha.llaves.length >= this.t) {
-          // Caso 2b: Si el subárbol derecho tiene al menos `t` claves
-          const claveSucesora = this.obtenerMinimo(claveDerecha)
-          nodo.llaves[i] = claveSucesora
-          this.eliminarRecursivo(claveDerecha, claveSucesora)
+        if (hijoIzquierdo.llaves.length >= this.t) {
+          console.log('izquierda')
+          // Caso 2a: Sustituir por el predecesor
+          const predecesor = this.obtenerMaximo(hijoIzquierdo)
+          nodo.llaves[i] = predecesor
+          this.eliminarRecursivo(hijoIzquierdo, predecesor)
+        } else if (hijoDerecho.llaves.length >= this.t) {
+          // Caso 2b: Sustituir por el sucesor
+          console.log('derecha')
+          const sucesor = this.obtenerMinimo(hijoDerecho)
+          nodo.llaves[i] = sucesor
+          this.eliminarRecursivo(hijoDerecho, sucesor)
         } else {
-          // Caso 2c: Si ambos subárboles tienen menos de `t` claves
-          // Fusionamos los subárboles izquierdo y derecho
+          console.log('caso raro')
+          // Caso 2c: Fusionar hijos izquierdo y derecho solo si es necesario
           this.fusionar(nodo, i)
-          this.eliminarRecursivo(claveIzquierda, llave)
+          this.eliminarRecursivo(hijoIzquierdo, llave)
         }
       }
     } else if (!nodo.esHoja) {
-      // Caso 3: Si no encontramos la clave y el nodo no es hoja, vamos al siguiente hijo
-      if (nodo.hijos[i]) {
-        this.eliminarRecursivo(nodo.hijos[i], llave)
+      // La clave no está en este nodo
+      console.log('a', i)
+      const hijo = nodo.hijos[i]
+      if (hijo.llaves.length < this.t) {
+        // Llamar a garantizar mínimo solo si es necesario
+        //this.garantizarMinimo(hijo, nodo, i)
+      }
+      this.eliminarRecursivo(nodo.hijos[i], llave)
+    }
+
+    // Si la raíz queda vacía, hacer el primer hijo la nueva raíz
+    if (this.raiz.llaves.length === 0 && !this.raiz.esHoja) {
+      this.raiz = this.raiz.hijos[0]
+    }
+  }
+
+  garantizarMinimo(nodo, padre, indicePadre) {
+    console.log('Iniciando garantizarMinimo')
+    console.log('nodo', nodo)
+    console.log('padre', padre)
+    console.log('indicePadre', indicePadre)
+
+    // Comprobar si el nodo tiene suficientes llaves
+    if (
+      indicePadre > 0 &&
+      padre.hijos[indicePadre - 1].llaves.length >= this.t
+    ) {
+      // Tomar una clave del hermano izquierdo
+      const hermanoIzquierdo = padre.hijos[indicePadre - 1]
+      console.log('Tomando clave del hermano izquierdo', hermanoIzquierdo)
+      nodo.llaves.unshift(padre.llaves[indicePadre - 1])
+      padre.llaves[indicePadre - 1] = hermanoIzquierdo.llaves.pop()
+      if (!hermanoIzquierdo.esHoja) {
+        nodo.hijos.unshift(hermanoIzquierdo.hijos.pop())
+      }
+      console.log('Estado después de tomar del hermano izquierdo')
+      console.log('nodo', nodo)
+      console.log('padre', padre)
+    } else if (
+      indicePadre < padre.hijos.length - 1 &&
+      padre.hijos[indicePadre + 1].llaves.length >= this.t
+    ) {
+      // Tomar una clave del hermano derecho
+      const hermanoDerecho = padre.hijos[indicePadre + 1]
+      console.log('Tomando clave del hermano derecho', hermanoDerecho)
+      nodo.llaves.push(padre.llaves[indicePadre])
+      padre.llaves[indicePadre] = hermanoDerecho.llaves.shift()
+      if (!hermanoDerecho.esHoja) {
+        nodo.hijos.push(hermanoDerecho.hijos.shift())
+      }
+      console.log('Estado después de tomar del hermano derecho')
+      console.log('nodo', nodo)
+      console.log('padre', padre)
+    } else {
+      // Fusionar con un hermano
+      console.log('Fusionando con el hermano')
+      if (indicePadre < padre.hijos.length - 1) {
+        this.fusionar(padre, indicePadre)
+      } else {
+        this.fusionar(padre, indicePadre - 1)
+      }
+      console.log('Estado después de la fusión')
+      console.log('nodo', nodo)
+      console.log('padre', padre)
+    }
+  }
+
+  fusionar(padre, indice) {
+    console.log('Iniciando fusión')
+    const hijoIzquierdo = padre.hijos[indice]
+    const hijoDerecho = padre.hijos[indice + 1]
+
+    console.log('hijoIzquierdo antes de la fusión:', hijoIzquierdo)
+    console.log('hijoDerecho antes de la fusión:', hijoDerecho)
+
+    // Mover la clave del nodo padre al hijo izquierdo
+    hijoIzquierdo.llaves.push(padre.llaves[indice])
+
+    // Mover las claves del hijo derecho al hijo izquierdo
+    hijoIzquierdo.llaves = hijoIzquierdo.llaves.concat(hijoDerecho.llaves)
+    if (!hijoDerecho.esHoja) {
+      hijoIzquierdo.hijos = hijoIzquierdo.hijos.concat(hijoDerecho.hijos)
+    }
+
+    // Eliminar el hijo derecho
+    padre.hijos.splice(indice + 1, 1)
+    padre.llaves.splice(indice, 1)
+
+    console.log('Estado después de la fusión')
+    console.log('hijoIzquierdo fusionado:', hijoIzquierdo)
+    console.log('padre después de la fusión:', padre)
+
+    // Si la raíz se queda vacía, mover el primer hijo a la raíz
+    if (padre.llaves.length === 0 && !padre.esHoja) {
+      console.log('La raíz está vacía, actualizando la raíz')
+      if (padre.hijos.length > 0) {
+        this.raiz = padre.hijos[0] // Cambiar la raíz
+        console.log('Raíz actualizada a:', this.raiz)
       }
     }
   }
@@ -183,24 +282,6 @@ export class ArbolB {
       nodo = nodo.hijos[0]
     }
     return nodo.llaves[0]
-  }
-
-  fusionar(nodo, indice) {
-    const hijoIzquierdo = nodo.hijos[indice]
-    const hijoDerecho = nodo.hijos[indice + 1]
-    const clavePadre = nodo.llaves[indice]
-
-    // Fusionamos el hijo izquierdo, la clave del padre y el hijo derecho
-    hijoIzquierdo.llaves.push(clavePadre, ...hijoDerecho.llaves)
-    if (!hijoIzquierdo.esHoja) {
-      hijoIzquierdo.hijos.push(...hijoDerecho.hijos)
-    }
-
-    // Eliminamos el hijo derecho del nodo y la clave del padre
-    nodo.llaves.splice(indice, 1)
-    nodo.hijos.splice(indice + 1, 1)
-
-    // Limpiar nodos vacíos después de la fusión
   }
 
   clonar() {

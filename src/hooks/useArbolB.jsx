@@ -22,7 +22,6 @@ const useArbolB = () => {
   const insertarNodo = (query) => {
     const nuevoArbol = arbolB.clonar()
     nuevoArbol.insertar(query)
-    console.log(nuevoArbol)
     //window.localStorage.setItem('arbolRN', JSON.stringify(nuevoArbol, 2, null))
     setArbolB(nuevoArbol)
     setRaiz(nuevoArbol.getRaiz()) // Actualizar la raíz después de la inserción
@@ -61,9 +60,6 @@ const useArbolB = () => {
   }
 
   const isInTree = (valor) => {
-    console.log('valor', valor)
-    console.log(arbolB.getRaiz())
-    console.log(arbolB.contiene(valor))
     return arbolB.contiene(valor)
   }
 

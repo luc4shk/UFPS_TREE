@@ -27,8 +27,6 @@ export const PracticaArbolB = () => {
     vaciarArbol,
   } = useArbolB()
 
-  console.log(raiz)
-
   const actions = {
     addNode: addNodeB,
     addFirst: addFirstB,
@@ -40,7 +38,7 @@ export const PracticaArbolB = () => {
   return (
     <LayoutTree
       values={values}
-      title={'Árbol B'}
+      title={'Árbol B y B+'}
       containerColor={'#22d3ee'}
       treeFunctions={{
         resetValues,

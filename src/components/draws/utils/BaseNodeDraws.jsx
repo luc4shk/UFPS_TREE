@@ -60,7 +60,9 @@ export const appendText = (nodeEnter) => {
       return d.data.name
     })
     .style('visibility', function (d) {
-      return d.data.name === 'Empty' ? 'hidden' : 'visible'
+      return d.data.name === 'Empty' || d.data.name === ''
+        ? 'hidden'
+        : 'visible'
     })
   return charText
 }
@@ -72,7 +74,6 @@ export const mergeNodes = (gNode, nodeEnter, positions) => {
     .transition()
     .attr('transform', function (d) {
       // Generamos un identificador único para nodos nulos
-      console.log(d)
       const key =
         d.data.name === null && d.parent
           ? `${d.parent.data.name}-null-${d.parent.children.indexOf(d)}`
@@ -113,9 +114,11 @@ export const appendRectangles = (nodeEnter, filterFunc, withNulls = false) => {
       if (withNulls) {
         return d.data.name === undefined ? 'hidden' : 'visible'
       }
+      console.log('data', d)
       return d.data.name === 'Empty' ||
         d.data.name === undefined ||
-        d.data.name === ''
+        d.data.name === '' ||
+        d.data.name === null
         ? 'hidden'
         : 'visible'
     })

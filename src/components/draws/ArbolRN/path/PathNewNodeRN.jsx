@@ -131,7 +131,6 @@ const doDeleteSteps = (value, d, setSteps) => {
 //Pasoso para buscar un nodo
 const doSearchSteps = (value, d, setSteps) => {
   // Primero, verifica si el nodo actual coincide con el valor a eliminar
-  console.log(d)
   if (d.data.name === value) {
     setSteps((prev) => [
       ...prev,
